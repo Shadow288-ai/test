@@ -65,6 +65,57 @@ export type Database = {
         }
         Relationships: []
       }
+      portfolio_holdings: {
+        Row: {
+          acquisition_date: string
+          client_id: string
+          cost_basis: number
+          created_at: string | null
+          id: string
+          market_value: number
+          portfolio_weight: number
+          region: string
+          sector: string
+          shares: number
+          stock_name: string
+          stock_ticker: string
+          updated_at: string | null
+          volatility: number
+        }
+        Insert: {
+          acquisition_date: string
+          client_id: string
+          cost_basis: number
+          created_at?: string | null
+          id?: string
+          market_value: number
+          portfolio_weight: number
+          region: string
+          sector: string
+          shares: number
+          stock_name: string
+          stock_ticker: string
+          updated_at?: string | null
+          volatility: number
+        }
+        Update: {
+          acquisition_date?: string
+          client_id?: string
+          cost_basis?: number
+          created_at?: string | null
+          id?: string
+          market_value?: number
+          portfolio_weight?: number
+          region?: string
+          sector?: string
+          shares?: number
+          stock_name?: string
+          stock_ticker?: string
+          updated_at?: string | null
+          volatility?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
