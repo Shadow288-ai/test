@@ -14,143 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
-      client_portfolios: {
+      clients: {
         Row: {
           client_id: string
+          client_name: string
           created_at: string
+          geography_score: number | null
           id: string
-          portfolio_name: string
+          notes: string | null
+          portfolio_value: number | null
+          risk_score: number | null
+          risk_tier: string | null
+          sector_concentration_score: number | null
+          top_regions: Json | null
+          top_sectors: Json | null
           updated_at: string
+          volatility_score: number | null
         }
         Insert: {
           client_id: string
+          client_name: string
           created_at?: string
+          geography_score?: number | null
           id?: string
-          portfolio_name?: string
+          notes?: string | null
+          portfolio_value?: number | null
+          risk_score?: number | null
+          risk_tier?: string | null
+          sector_concentration_score?: number | null
+          top_regions?: Json | null
+          top_sectors?: Json | null
           updated_at?: string
+          volatility_score?: number | null
         }
         Update: {
           client_id?: string
+          client_name?: string
           created_at?: string
+          geography_score?: number | null
           id?: string
-          portfolio_name?: string
+          notes?: string | null
+          portfolio_value?: number | null
+          risk_score?: number | null
+          risk_tier?: string | null
+          sector_concentration_score?: number | null
+          top_regions?: Json | null
+          top_sectors?: Json | null
           updated_at?: string
-        }
-        Relationships: []
-      }
-      portfolio_holdings: {
-        Row: {
-          acquisition_date: string
-          asset_type: Database["public"]["Enums"]["asset_type"]
-          client_id: string
-          cost_basis: number
-          created_at: string
-          expected_sell_date: string | null
-          id: string
-          is_bullish: boolean
-          market_value: number
-          portfolio_id: string
-          portfolio_weight: number
-          region: string
-          sector: string
-          shares: number
-          stock_name: string
-          stock_ticker: string
-          updated_at: string
-          volatility: number
-        }
-        Insert: {
-          acquisition_date: string
-          asset_type: Database["public"]["Enums"]["asset_type"]
-          client_id: string
-          cost_basis: number
-          created_at?: string
-          expected_sell_date?: string | null
-          id?: string
-          is_bullish?: boolean
-          market_value: number
-          portfolio_id: string
-          portfolio_weight: number
-          region: string
-          sector: string
-          shares: number
-          stock_name: string
-          stock_ticker: string
-          updated_at?: string
-          volatility: number
-        }
-        Update: {
-          acquisition_date?: string
-          asset_type?: Database["public"]["Enums"]["asset_type"]
-          client_id?: string
-          cost_basis?: number
-          created_at?: string
-          expected_sell_date?: string | null
-          id?: string
-          is_bullish?: boolean
-          market_value?: number
-          portfolio_id?: string
-          portfolio_weight?: number
-          region?: string
-          sector?: string
-          shares?: number
-          stock_name?: string
-          stock_ticker?: string
-          updated_at?: string
-          volatility?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "portfolio_holdings_portfolio_id_fkey"
-            columns: ["portfolio_id"]
-            isOneToOne: false
-            referencedRelation: "client_portfolios"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      profiles: {
-        Row: {
-          created_at: string
-          email: string
-          full_name: string | null
-          id: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          full_name?: string | null
-          id: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          full_name?: string | null
-          id?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      user_roles: {
-        Row: {
-          created_at: string
-          id: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          user_id?: string
+          volatility_score?: number | null
         }
         Relationships: []
       }
@@ -159,17 +70,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      has_role: {
-        Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
-        }
-        Returns: boolean
-      }
+      [_ in never]: never
     }
     Enums: {
-      app_role: "client" | "admin"
-      asset_type: "Stock" | "ETF" | "Crypto"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -296,9 +200,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {
-      app_role: ["client", "admin"],
-      asset_type: ["Stock", "ETF", "Crypto"],
-    },
+    Enums: {},
   },
 } as const
