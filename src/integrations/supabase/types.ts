@@ -14,7 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      clients: {
+        Row: {
+          client_id: string
+          client_name: string
+          created_at: string
+          geography_score: number | null
+          id: string
+          notes: string | null
+          portfolio_value: number | null
+          risk_score: number | null
+          risk_tier: string | null
+          sector_concentration_score: number | null
+          top_regions: Json | null
+          top_sectors: Json | null
+          updated_at: string
+          volatility_score: number | null
+        }
+        Insert: {
+          client_id: string
+          client_name: string
+          created_at?: string
+          geography_score?: number | null
+          id?: string
+          notes?: string | null
+          portfolio_value?: number | null
+          risk_score?: number | null
+          risk_tier?: string | null
+          sector_concentration_score?: number | null
+          top_regions?: Json | null
+          top_sectors?: Json | null
+          updated_at?: string
+          volatility_score?: number | null
+        }
+        Update: {
+          client_id?: string
+          client_name?: string
+          created_at?: string
+          geography_score?: number | null
+          id?: string
+          notes?: string | null
+          portfolio_value?: number | null
+          risk_score?: number | null
+          risk_tier?: string | null
+          sector_concentration_score?: number | null
+          top_regions?: Json | null
+          top_sectors?: Json | null
+          updated_at?: string
+          volatility_score?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
