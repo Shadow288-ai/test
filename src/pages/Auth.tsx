@@ -12,33 +12,32 @@ export default function Auth() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { signIn, signUp, user, userRole, loading } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const { signIn, signUp, user, userRole } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (user && userRole) {
-      console.log('Navigating user with role:', userRole);
       if (userRole === 'admin') {
-        navigate('/admin', { replace: true });
+        navigate('/admin');
       } else if (userRole === 'client') {
-        navigate('/client', { replace: true });
+        navigate('/client');
       }
     }
   }, [user, userRole, navigate]);
-
+/*
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setLoading(true);
     await signIn(email, password);
-    setIsSubmitting(false);
+    setLoading(false);
   };
-
+*/
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setLoading(true);
     const { error } = await signUp(email, password, fullName);
-    setIsSubmitting(false);
+    setLoading(false);
     if (!error) {
       setEmail('');
       setPassword('');
@@ -46,17 +45,20 @@ export default function Auth() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-secondary/20 to-background p-4">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
-  }
 
+const handleSignIn = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
+  const { error } = await signIn(email, password);
+  setLoading(false);
+
+  if (error) {
+    alert(`Login error: ${error.message}`);
+    console.error('Login error:', error);
+  } else {
+    console.log('Login success – waiting for redirect...');
+  }
+};
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-secondary/20 to-background p-4">
       <Card className="w-full max-w-md">
@@ -99,8 +101,8 @@ export default function Auth() {
                     required
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={isSubmitting}>
-                  {isSubmitting ? 'Signing in...' : 'Sign In'}
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? 'Signing in...' : 'Sign In'}
                 </Button>
               </form>
             </TabsContent>
@@ -139,8 +141,8 @@ export default function Auth() {
                     minLength={6}
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={isSubmitting}>
-                  {isSubmitting ? 'Creating account...' : 'Sign Up'}
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? 'Creating account...' : 'Sign Up'}
                 </Button>
               </form>
             </TabsContent>

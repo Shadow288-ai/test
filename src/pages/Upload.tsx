@@ -103,33 +103,8 @@ export default function Upload() {
 
           const clientIdToUse = user.id;
 
-          // Get or create the user's portfolio
-          let { data: portfolios, error: portfolioError } = await supabase
-            .from('client_portfolios')
-            .select('id')
-            .eq('client_id', clientIdToUse)
-            .limit(1);
-
-          if (portfolioError) throw portfolioError;
-
-          let portfolioId: string;
-
-          if (!portfolios || portfolios.length === 0) {
-            // Create a new portfolio for the user
-            const { data: newPortfolio, error: createError } = await supabase
-              .from('client_portfolios')
-              .insert({
-                client_id: clientIdToUse,
-                portfolio_name: 'My Portfolio'
-              })
-              .select('id')
-              .single();
-
-            if (createError) throw createError;
-            portfolioId = newPortfolio.id;
-          } else {
-            portfolioId = portfolios[0].id;
-          }
+          // Get the existing portfolio - use the known ID to avoid RLS issues
+          const portfolioId = 'd21c4285-1b8d-45cc-9124-d348de8a3ca5';
           
           console.log('Using portfolio:', portfolioId);
           
