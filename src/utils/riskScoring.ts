@@ -70,7 +70,7 @@ export const calculateClientRiskScore = (holdings: PortfolioHolding[]): ClientRi
   else if (regionConcentration > 0.4) riskScore += 20;
   else if (regionConcentration > 0.25) riskScore += 10;
   else riskScore += 5;
-
+  
   // Determine risk level based on total score (0-100)
   let riskLevel: RiskLevel;
   if (riskScore >= 70) riskLevel = 'High';
