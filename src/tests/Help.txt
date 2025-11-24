@@ -1,0 +1,5 @@
+npm install needed before running //delete folder node modules v=before pushing
+
+npx vitest  //to run test
+
+npm run dev //to run server on localHost
