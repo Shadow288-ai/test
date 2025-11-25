@@ -17,37 +17,88 @@ export type Database = {
       client_portfolios: {
         Row: {
           client_id: string
-          created_at: string
+          created_at: string | null
           id: string
-          portfolio_name: string
-          updated_at: string
+          portfolio_name: string | null
+          updated_at: string | null
         }
         Insert: {
           client_id: string
-          created_at?: string
+          created_at?: string | null
           id?: string
-          portfolio_name?: string
-          updated_at?: string
+          portfolio_name?: string | null
+          updated_at?: string | null
         }
         Update: {
           client_id?: string
-          created_at?: string
+          created_at?: string | null
           id?: string
-          portfolio_name?: string
+          portfolio_name?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      clients: {
+        Row: {
+          client_id: string
+          client_name: string
+          created_at: string
+          geography_score: number | null
+          id: string
+          notes: string | null
+          portfolio_value: number | null
+          risk_score: number | null
+          risk_tier: string | null
+          sector_concentration_score: number | null
+          top_regions: Json | null
+          top_sectors: Json | null
+          updated_at: string
+          volatility_score: number | null
+        }
+        Insert: {
+          client_id: string
+          client_name: string
+          created_at?: string
+          geography_score?: number | null
+          id?: string
+          notes?: string | null
+          portfolio_value?: number | null
+          risk_score?: number | null
+          risk_tier?: string | null
+          sector_concentration_score?: number | null
+          top_regions?: Json | null
+          top_sectors?: Json | null
           updated_at?: string
+          volatility_score?: number | null
+        }
+        Update: {
+          client_id?: string
+          client_name?: string
+          created_at?: string
+          geography_score?: number | null
+          id?: string
+          notes?: string | null
+          portfolio_value?: number | null
+          risk_score?: number | null
+          risk_tier?: string | null
+          sector_concentration_score?: number | null
+          top_regions?: Json | null
+          top_sectors?: Json | null
+          updated_at?: string
+          volatility_score?: number | null
         }
         Relationships: []
       }
       portfolio_holdings: {
         Row: {
           acquisition_date: string
-          asset_type: Database["public"]["Enums"]["asset_type"]
+          asset_type: Database["public"]["Enums"]["asset_type"] | null
           client_id: string
           cost_basis: number
-          created_at: string
+          created_at: string | null
           expected_sell_date: string | null
           id: string
-          is_bullish: boolean
+          is_bullish: boolean | null
           market_value: number
           portfolio_id: string
           portfolio_weight: number
@@ -56,18 +107,18 @@ export type Database = {
           shares: number
           stock_name: string
           stock_ticker: string
-          updated_at: string
+          updated_at: string | null
           volatility: number
         }
         Insert: {
           acquisition_date: string
-          asset_type: Database["public"]["Enums"]["asset_type"]
+          asset_type?: Database["public"]["Enums"]["asset_type"] | null
           client_id: string
           cost_basis: number
-          created_at?: string
+          created_at?: string | null
           expected_sell_date?: string | null
           id?: string
-          is_bullish?: boolean
+          is_bullish?: boolean | null
           market_value: number
           portfolio_id: string
           portfolio_weight: number
@@ -76,18 +127,18 @@ export type Database = {
           shares: number
           stock_name: string
           stock_ticker: string
-          updated_at?: string
+          updated_at?: string | null
           volatility: number
         }
         Update: {
           acquisition_date?: string
-          asset_type?: Database["public"]["Enums"]["asset_type"]
+          asset_type?: Database["public"]["Enums"]["asset_type"] | null
           client_id?: string
           cost_basis?: number
-          created_at?: string
+          created_at?: string | null
           expected_sell_date?: string | null
           id?: string
-          is_bullish?: boolean
+          is_bullish?: boolean | null
           market_value?: number
           portfolio_id?: string
           portfolio_weight?: number
@@ -96,7 +147,7 @@ export type Database = {
           shares?: number
           stock_name?: string
           stock_ticker?: string
-          updated_at?: string
+          updated_at?: string | null
           volatility?: number
         }
         Relationships: [
@@ -111,43 +162,43 @@ export type Database = {
       }
       profiles: {
         Row: {
-          created_at: string
-          email: string
+          created_at: string | null
+          email: string | null
           full_name: string | null
           id: string
-          updated_at: string
+          updated_at: string | null
         }
         Insert: {
-          created_at?: string
-          email: string
+          created_at?: string | null
+          email?: string | null
           full_name?: string | null
           id: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
-          created_at?: string
-          email?: string
+          created_at?: string | null
+          email?: string | null
           full_name?: string | null
           id?: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
       user_roles: {
         Row: {
-          created_at: string
+          created_at: string | null
           id: string
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           id?: string
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
@@ -168,7 +219,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "client" | "admin"
+      app_role: "admin" | "client"
       asset_type: "Stock" | "ETF" | "Crypto"
     }
     CompositeTypes: {
@@ -297,7 +348,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["client", "admin"],
+      app_role: ["admin", "client"],
       asset_type: ["Stock", "ETF", "Crypto"],
     },
   },
