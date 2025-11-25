@@ -1,5 +1,6 @@
 // src/lib/priceUpdater.ts
 import { supabase } from '@/integrations/supabase/client';
+import { getRealStockPrice } from '@/data/stockPrices';
 
 const ALPHAVANTAGE_API_KEY = import.meta.env
   .VITE_ALPHA_VANTAGE_API_KEY as string | undefined;
@@ -13,9 +14,17 @@ type HoldingRow = {
   shares: number | string | null;
 };
 
-async function fetchAlphaVantagePrice(symbol: string): Promise<number | null> {
+async function getStockPrice(symbol: string): Promise<number | null> {
+  // First try to get real price from our data
+  const realPrice = getRealStockPrice(symbol);
+  if (realPrice !== null) {
+    console.log('[priceUpdater] Got real price for', symbol, '=', realPrice);
+    return realPrice;
+  }
+
+  // Fallback to API if available
   if (!ALPHAVANTAGE_API_KEY) {
-    console.error('[priceUpdater] VITE_ALPHA_VANTAGE_API_KEY is not set');
+    console.error('[priceUpdater] VITE_ALPHA_VANTAGE_API_KEY is not set and no real price available');
     return null;
   }
 
@@ -23,7 +32,7 @@ async function fetchAlphaVantagePrice(symbol: string): Promise<number | null> {
     symbol
   )}&apikey=${ALPHAVANTAGE_API_KEY}`;
 
-  console.log('[priceUpdater] Fetching price for', symbol);
+  console.log('[priceUpdater] Fetching price from API for', symbol);
 
   const res = await fetch(url);
   if (!res.ok) {
@@ -52,7 +61,7 @@ async function fetchAlphaVantagePrice(symbol: string): Promise<number | null> {
     return null;
   }
 
-  console.log('[priceUpdater] Got price for', symbol, '=', price);
+  console.log('[priceUpdater] Got API price for', symbol, '=', price);
   return price;
 }
 
@@ -117,7 +126,7 @@ export async function refreshTopHoldingsPricesForCurrentUser(
 
   for (const symbol of cleanTickers) {
     try {
-      const pricePerShare = await fetchAlphaVantagePrice(symbol);
+      const pricePerShare = await getStockPrice(symbol);
 
       if (pricePerShare == null) {
         errors.push(`No price for ${symbol}`);

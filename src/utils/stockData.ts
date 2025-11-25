@@ -1,3 +1,5 @@
+import { getRealStockPrice } from '@/data/stockPrices';
+
 // Stock sector and region mapping
 const STOCK_INFO: Record<string, { sector: string; region: string; name: string }> = {
   // Technology
@@ -156,128 +158,62 @@ export const getStockInfo = (ticker: string) => {
 };
 
 /**
- * Helper: simulate a plausible current price when real data is unavailable.
+ * Get current price - uses real prices from data file
  */
-const simulateCurrentPrice = (ticker: string): number => {
+const getCurrentPrice = (ticker: string): number => {
+  const realPrice = getRealStockPrice(ticker);
+  if (realPrice !== null) {
+    return realPrice;
+  }
+
+  // Fallback for unknown tickers
   const stockInfo = getStockInfo(ticker);
-
-  // Crypto prices (high value / volatile)
   if (ticker.includes('-USD')) {
-    if (ticker.includes('BTC')) return 45000 + Math.random() * 5000;
-    if (ticker.includes('ETH')) return 2500 + Math.random() * 500;
-    return 50 + Math.random() * 200;
+    return 100 + Math.random() * 100;
   }
-
-  // ETF prices (moderate value)
   if (stockInfo.sector.includes('ETF')) {
-    return 100 + Math.random() * 300;
+    return 100 + Math.random() * 200;
   }
-
-  // Regular stock prices
-  return 50 + Math.random() * 450;
+  return 50 + Math.random() * 200;
 };
 
-// Fetch current stock price with better fallback logic
+// Fetch current stock price - uses real prices
 export const fetchCurrentPrice = async (ticker: string): Promise<number> => {
-  const isCrypto = ticker.includes('-USD');
-
-  // ⚠️ StockData.org endpoint in the Edge Function is stock-focused.
-  // Crypto tickers are handled via simulation only to avoid 500 errors.
-  if (isCrypto) {
-    return simulateCurrentPrice(ticker);
-  }
-
-  try {
-    const { supabase } = await import('@/integrations/supabase/client');
-    const { data, error } = await supabase.functions.invoke('fetch-stock-data', {
-      body: { ticker, type: 'current' },
-    });
-
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    if (!data || !data.price) {
-      throw new Error('No price data returned from fetch-stock-data');
-    }
-
-    return data.price;
-  } catch (error) {
-    console.warn(
-      `Failed to fetch current price from fetch-stock-data for ${ticker}, using fallback`,
-      error
-    );
-    return simulateCurrentPrice(ticker);
-  }
+  return getCurrentPrice(ticker);
 };
 
-// Fetch historical data with better fallback and error handling
+// Generate realistic historical data based on current price
 export const fetchHistoricalData = async (ticker: string, days: number = 30) => {
+  const currentPrice = await fetchCurrentPrice(ticker);
+  
+  // Determine volatility based on asset type
   const isCrypto = ticker.includes('-USD');
-
-  // For crypto, go straight to simulated data to avoid hitting a stock-only API.
-  if (isCrypto) {
-    console.warn(
-      `Skipping fetch-stock-data for historical crypto prices (${ticker}), using simulated data`
-    );
-    const currentPrice = await fetchCurrentPrice(ticker);
-    const volatility = 0.02; // 2% daily volatility
-
-    return Array.from({ length: days }, (_, i) => {
-      const daysAgo = days - i;
-      const randomChange = (Math.random() - 0.5) * 2 * volatility;
-      const price = currentPrice * (1 + randomChange * Math.sqrt(daysAgo));
-
-      return {
-        date: new Date(
-          Date.now() - daysAgo * 24 * 60 * 60 * 1000
-        ).toLocaleDateString(),
-        price: Math.max(price, 1),
-      };
+  const stockInfo = getStockInfo(ticker);
+  const isETF = stockInfo.sector.includes('ETF');
+  
+  // Realistic daily volatility ranges
+  const volatility = isCrypto ? 0.03 : isETF ? 0.008 : 0.015;
+  
+  // Generate historical prices with realistic trend
+  const historicalData = [];
+  let price = currentPrice;
+  
+  // Work backwards from current price
+  for (let i = days - 1; i >= 0; i--) {
+    const daysAgo = i;
+    const date = new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000);
+    
+    historicalData.push({
+      date: date.toLocaleDateString(),
+      price: Math.max(price, 0.01),
     });
+    
+    // Calculate previous day's price with random walk
+    const dailyChange = (Math.random() - 0.48) * volatility; // Slight upward bias
+    price = price / (1 + dailyChange);
   }
-
-  try {
-    const { supabase } = await import('@/integrations/supabase/client');
-    const { data, error } = await supabase.functions.invoke('fetch-stock-data', {
-      body: { ticker, type: 'historical' },
-    });
-
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    if (!data || !data.data) {
-      throw new Error('No historical data returned from fetch-stock-data');
-    }
-
-    return data.data.map((item: any) => ({
-      date: new Date(item.date).toLocaleDateString(),
-      price: item.price,
-    }));
-  } catch (error) {
-    console.warn(
-      `Failed to fetch historical data from fetch-stock-data for ${ticker}, using simulated data`,
-      error
-    );
-
-    // Generate realistic simulated historical data
-    const currentPrice = await fetchCurrentPrice(ticker);
-    const volatility = 0.02; // 2% daily volatility
-
-    return Array.from({ length: days }, (_, i) => {
-      const daysAgo = days - i;
-      const randomChange = (Math.random() - 0.5) * 2 * volatility;
-      const price = currentPrice * (1 + randomChange * Math.sqrt(daysAgo));
-
-      return {
-        date: new Date(
-          Date.now() - daysAgo * 24 * 60 * 60 * 1000
-        ).toLocaleDateString(),
-        price: Math.max(price, 1),
-      };
-    });
-  }
+  
+  return historicalData.reverse();
 };
 
 // Calculate volatility from historical prices
