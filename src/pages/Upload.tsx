@@ -184,9 +184,12 @@ export default function Upload() {
             description: `Processed ${holdingsData.length} holdings with live market data`,
           });
 
-          // Navigate to client dashboard
+          // Navigate to client dashboard with refresh flag
           setTimeout(() => {
-            navigate(userRole === 'admin' ? '/admin' : '/client');
+            navigate(userRole === 'admin' ? '/admin' : '/client', { 
+              state: { refresh: true },
+              replace: true 
+            });
           }, 1500);
         } catch (error) {
           console.error('Upload error:', error);

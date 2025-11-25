@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Card,
@@ -44,6 +45,7 @@ import {
 
 export default function ClientDashboard() {
   const { user } = useAuth();
+  const location = useLocation();
   const [holdings, setHoldings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedHolding, setSelectedHolding] = useState<any | null>(null);
@@ -86,12 +88,12 @@ export default function ClientDashboard() {
     return sorted;
   }, [holdings]);
 
-  // Initial load of holdings when user is available
+  // Initial load of holdings when user is available or when refresh flag is set
   useEffect(() => {
     if (!user) return;
     fetchPortfolioData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [user, location.state]);
 
   // Manual refresh for top holdings prices (no automatic overwrite on mount)
   const handleRefreshTopPrices = async () => {
