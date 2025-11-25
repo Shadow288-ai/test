@@ -177,12 +177,11 @@ const simulateCurrentPrice = (ticker: string): number => {
   return 50 + Math.random() * 450;
 };
 
-// Fetch current stock price with better fallback logic
+// Fetch current stock price with graceful API limit handling
 export const fetchCurrentPrice = async (ticker: string): Promise<number> => {
   const isCrypto = ticker.includes('-USD');
 
-  // ⚠️ StockData.org endpoint in the Edge Function is stock-focused.
-  // Crypto tickers are handled via simulation only to avoid 500 errors.
+  // For crypto, use simulated data directly
   if (isCrypto) {
     return simulateCurrentPrice(ticker);
   }
@@ -192,6 +191,13 @@ export const fetchCurrentPrice = async (ticker: string): Promise<number> => {
     const { data, error } = await supabase.functions.invoke('fetch-stock-data', {
       body: { ticker, type: 'current' },
     });
+
+    // Check for API limit errors (402, 429) and gracefully fall back
+    if (error?.message?.includes('402') || error?.message?.includes('Payment Required') || 
+        error?.message?.includes('429') || error?.message?.includes('rate limit')) {
+      console.info(`API limit reached for ${ticker}, using simulated data`);
+      return simulateCurrentPrice(ticker);
+    }
 
     if (error) {
       throw new Error(error.message);
@@ -203,23 +209,18 @@ export const fetchCurrentPrice = async (ticker: string): Promise<number> => {
 
     return data.price;
   } catch (error) {
-    console.warn(
-      `Failed to fetch current price from fetch-stock-data for ${ticker}, using fallback`,
-      error
-    );
+    // Gracefully fall back to simulation for any errors
+    console.info(`Using simulated price for ${ticker}`);
     return simulateCurrentPrice(ticker);
   }
 };
 
-// Fetch historical data with better fallback and error handling
+// Fetch historical data with graceful API limit handling
 export const fetchHistoricalData = async (ticker: string, days: number = 30) => {
   const isCrypto = ticker.includes('-USD');
 
-  // For crypto, go straight to simulated data to avoid hitting a stock-only API.
-  if (isCrypto) {
-    console.warn(
-      `Skipping fetch-stock-data for historical crypto prices (${ticker}), using simulated data`
-    );
+  // Helper to generate simulated historical data
+  const generateSimulatedData = async () => {
     const currentPrice = await fetchCurrentPrice(ticker);
     const volatility = 0.02; // 2% daily volatility
 
@@ -235,6 +236,12 @@ export const fetchHistoricalData = async (ticker: string, days: number = 30) => 
         price: Math.max(price, 1),
       };
     });
+  };
+
+  // For crypto, use simulated data directly
+  if (isCrypto) {
+    console.info(`Using simulated historical data for crypto: ${ticker}`);
+    return generateSimulatedData();
   }
 
   try {
@@ -242,6 +249,13 @@ export const fetchHistoricalData = async (ticker: string, days: number = 30) => 
     const { data, error } = await supabase.functions.invoke('fetch-stock-data', {
       body: { ticker, type: 'historical' },
     });
+
+    // Check for API limit errors and gracefully fall back
+    if (error?.message?.includes('402') || error?.message?.includes('Payment Required') || 
+        error?.message?.includes('429') || error?.message?.includes('rate limit')) {
+      console.info(`API limit reached for ${ticker}, using simulated historical data`);
+      return generateSimulatedData();
+    }
 
     if (error) {
       throw new Error(error.message);
@@ -256,27 +270,9 @@ export const fetchHistoricalData = async (ticker: string, days: number = 30) => 
       price: item.price,
     }));
   } catch (error) {
-    console.warn(
-      `Failed to fetch historical data from fetch-stock-data for ${ticker}, using simulated data`,
-      error
-    );
-
-    // Generate realistic simulated historical data
-    const currentPrice = await fetchCurrentPrice(ticker);
-    const volatility = 0.02; // 2% daily volatility
-
-    return Array.from({ length: days }, (_, i) => {
-      const daysAgo = days - i;
-      const randomChange = (Math.random() - 0.5) * 2 * volatility;
-      const price = currentPrice * (1 + randomChange * Math.sqrt(daysAgo));
-
-      return {
-        date: new Date(
-          Date.now() - daysAgo * 24 * 60 * 60 * 1000
-        ).toLocaleDateString(),
-        price: Math.max(price, 1),
-      };
-    });
+    // Gracefully fall back to simulation for any errors
+    console.info(`Using simulated historical data for ${ticker}`);
+    return generateSimulatedData();
   }
 };
 
