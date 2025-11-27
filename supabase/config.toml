@@ -2,3 +2,6 @@ project_id = "seoevpglpmqtmgulooyx"
 
 [functions.risk-advisor]
 verify_jwt = false
+
+[functions.update-stock-prices]
+verify_jwt = false
