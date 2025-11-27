@@ -15,6 +15,7 @@ import { MetricDetailModal } from "@/components/MetricDetailModal";
 import { HoldingsListModal } from "@/components/HoldingsListModal";
 import { RiskBadge } from "@/components/RiskBadge";
 import { StockDetailModal } from "@/components/StockDetailModal";
+import { RiskAdvisorChat } from "@/components/RiskAdvisorChat";
 import {
   PieChart,
   Pie,
@@ -205,7 +206,7 @@ export default function ClientDashboard() {
         ? Array.from(regionMap.entries()).sort((a, b) => b[1] - a[1])[0]
         : null;
 
-    // Risk Scoring Algorithm (0-100)
+    // Risk Scoring Algorithm - Balanced approach (0-100)
     let riskScore = 0;
     let riskFactors: {
       factor: string;
@@ -214,117 +215,164 @@ export default function ClientDashboard() {
       reason: string;
     }[] = [];
 
-    // Factor 1: Volatility (0-40 points)
+    // Factor 1: Volatility (0-35 points) - More balanced thresholds
     let volatilityPoints = 0;
-    if (avgVolatility > 30) {
-      volatilityPoints = 40;
+    if (avgVolatility > 40) {
+      volatilityPoints = 35;
       riskFactors.push({
         factor: "Volatility",
-        points: 40,
-        maxPoints: 40,
-        reason: "Very high average volatility (>30%)",
+        points: 35,
+        maxPoints: 35,
+        reason: "Extremely high volatility (>40%)",
       });
-    } else if (avgVolatility > 20) {
-      volatilityPoints = 30;
+    } else if (avgVolatility > 30) {
+      volatilityPoints = 28;
       riskFactors.push({
         factor: "Volatility",
-        points: 30,
-        maxPoints: 40,
-        reason: "High average volatility (20-30%)",
+        points: 28,
+        maxPoints: 35,
+        reason: "Very high volatility (30-40%)",
       });
-    } else if (avgVolatility > 15) {
+    } else if (avgVolatility > 22) {
       volatilityPoints = 20;
       riskFactors.push({
         factor: "Volatility",
         points: 20,
-        maxPoints: 40,
-        reason: "Moderate volatility (15-20%)",
+        maxPoints: 35,
+        reason: "High volatility (22-30%)",
       });
-    } else {
-      volatilityPoints = 10;
+    } else if (avgVolatility > 15) {
+      volatilityPoints = 12;
       riskFactors.push({
         factor: "Volatility",
-        points: 10,
-        maxPoints: 40,
-        reason: "Low volatility (<15%)",
+        points: 12,
+        maxPoints: 35,
+        reason: "Moderate volatility (15-22%)",
+      });
+    } else {
+      volatilityPoints = 5;
+      riskFactors.push({
+        factor: "Volatility",
+        points: 5,
+        maxPoints: 35,
+        reason: "Low volatility (<15%) - Stable portfolio",
       });
     }
     riskScore += volatilityPoints;
 
-    // Factor 2: Sector Concentration (0-30 points)
+    // Factor 2: Sector Concentration (0-30 points) - Using Herfindahl Index
     let sectorPoints = 0;
-    if (sectorConcentration > 0.5) {
+    if (sectorConcentration > 0.4) {
       sectorPoints = 30;
       riskFactors.push({
         factor: "Sector Concentration",
         points: 30,
         maxPoints: 30,
-        reason: "Very high concentration in few sectors",
+        reason: "Heavily concentrated in few sectors (HHI > 0.4)",
       });
-    } else if (sectorConcentration > 0.33) {
+    } else if (sectorConcentration > 0.25) {
       sectorPoints = 20;
       riskFactors.push({
         factor: "Sector Concentration",
         points: 20,
         maxPoints: 30,
-        reason: "Moderate sector concentration",
+        reason: "Moderate concentration (HHI 0.25-0.4)",
       });
-    } else if (sectorConcentration > 0.2) {
+    } else if (sectorConcentration > 0.15) {
       sectorPoints = 10;
       riskFactors.push({
         factor: "Sector Concentration",
         points: 10,
         maxPoints: 30,
-        reason: "Low sector concentration",
+        reason: "Good diversification (HHI 0.15-0.25)",
       });
     } else {
-      sectorPoints = 5;
+      sectorPoints = 3;
       riskFactors.push({
         factor: "Sector Concentration",
-        points: 5,
+        points: 3,
         maxPoints: 30,
-        reason: "Well diversified across sectors",
+        reason: "Excellent sector diversification (HHI < 0.15)",
       });
     }
     riskScore += sectorPoints;
 
-    // Factor 3: Geographic Concentration (0-30 points)
+    // Factor 3: Geographic Concentration (0-20 points)
     let regionPoints = 0;
-    if (regionConcentration > 0.6) {
-      regionPoints = 30;
-      riskFactors.push({
-        factor: "Geographic Concentration",
-        points: 30,
-        maxPoints: 30,
-        reason: "Very high concentration in one region",
-      });
-    } else if (regionConcentration > 0.4) {
+    if (regionConcentration > 0.7) {
       regionPoints = 20;
       riskFactors.push({
         factor: "Geographic Concentration",
         points: 20,
-        maxPoints: 30,
-        reason: "Moderate regional concentration",
+        maxPoints: 20,
+        reason: "Heavy concentration in single region (>70%)",
       });
-    } else if (regionConcentration > 0.25) {
-      regionPoints = 10;
+    } else if (regionConcentration > 0.5) {
+      regionPoints = 14;
       riskFactors.push({
         factor: "Geographic Concentration",
-        points: 10,
-        maxPoints: 30,
-        reason: "Some regional concentration",
+        points: 14,
+        maxPoints: 20,
+        reason: "Moderate regional concentration (50-70%)",
+      });
+    } else if (regionConcentration > 0.35) {
+      regionPoints = 8;
+      riskFactors.push({
+        factor: "Geographic Concentration",
+        points: 8,
+        maxPoints: 20,
+        reason: "Balanced regional exposure (35-50%)",
       });
     } else {
-      regionPoints = 5;
+      regionPoints = 3;
       riskFactors.push({
         factor: "Geographic Concentration",
-        points: 5,
-        maxPoints: 30,
-        reason: "Well diversified geographically",
+        points: 3,
+        maxPoints: 20,
+        reason: "Excellent geographic diversification (<35%)",
       });
     }
     riskScore += regionPoints;
 
+    // Factor 4: Portfolio Size & Diversification (0-15 points)
+    let sizePoints = 0;
+    if (holdings.length < 5) {
+      sizePoints = 15;
+      riskFactors.push({
+        factor: "Portfolio Diversification",
+        points: 15,
+        maxPoints: 15,
+        reason: "Under-diversified portfolio (<5 holdings)",
+      });
+    } else if (holdings.length < 10) {
+      sizePoints = 10;
+      riskFactors.push({
+        factor: "Portfolio Diversification",
+        points: 10,
+        maxPoints: 15,
+        reason: "Limited diversification (5-10 holdings)",
+      });
+    } else if (holdings.length < 20) {
+      sizePoints = 5;
+      riskFactors.push({
+        factor: "Portfolio Diversification",
+        points: 5,
+        maxPoints: 15,
+        reason: "Good diversification (10-20 holdings)",
+      });
+    } else {
+      sizePoints = 2;
+      riskFactors.push({
+        factor: "Portfolio Diversification",
+        points: 2,
+        maxPoints: 15,
+        reason: "Well-diversified portfolio (>20 holdings)",
+      });
+    }
+    riskScore += sizePoints;
+
+    // Cap at 100 and determine risk level with better thresholds
+    riskScore = Math.min(Math.round(riskScore), 100);
     const riskLevel =
       riskScore >= 70 ? "High" : riskScore >= 40 ? "Medium" : "Low";
 
@@ -673,54 +721,55 @@ export default function ClientDashboard() {
 
       <Card className="bg-card/50">
         <CardHeader>
-          <CardTitle>Risk Improvement Tips</CardTitle>
+          <CardTitle>Risk Score Explanation</CardTitle>
+          <CardDescription>
+            Understanding how your risk score is calculated
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <ul className="space-y-2 text-sm">
-            {metrics.riskLevel === "High" && (
-              <>
-                <li>
-                  • Consider diversifying across more sectors to reduce
-                  concentration risk
-                </li>
-                <li>
-                  • Review high-volatility holdings and consider rebalancing to
-                  lower-risk assets
-                </li>
-                <li>
-                  • Evaluate your asset allocation to ensure it aligns with your
-                  risk tolerance
-                </li>
-              </>
-            )}
-            {metrics.riskLevel === "Medium" && (
-              <>
-                <li>
-                  • Your portfolio has moderate risk - maintain regular
-                  monitoring
-                </li>
-                <li>
-                  • Consider geographic diversification to reduce regional
-                  exposure
-                </li>
-                <li>
-                  • Review holdings quarterly to ensure continued alignment with
-                  goals
-                </li>
-              </>
-            )}
-            {metrics.riskLevel === "Low" && (
-              <>
-                <li>• Your portfolio has low risk - well diversified</li>
-                <li>• Continue maintaining balanced asset allocation</li>
-                <li>
-                  • Consider periodic rebalancing to maintain target allocations
-                </li>
-              </>
-            )}
-          </ul>
+          <div className="space-y-4">
+            <div>
+              <h4 className="font-semibold mb-2">Risk Factors Breakdown:</h4>
+              <div className="space-y-3">
+                {metrics.riskFactors.map((factor, idx) => (
+                  <div key={idx} className="border-l-2 border-primary pl-3">
+                    <div className="flex justify-between items-start mb-1">
+                      <span className="font-medium text-sm">{factor.factor}</span>
+                      <span className="text-sm text-muted-foreground">
+                        {factor.points}/{factor.maxPoints} points
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">{factor.reason}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div className="pt-4 border-t border-border">
+              <h4 className="font-semibold mb-2">Risk Levels:</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>• <span className="text-success font-medium">Low (0-39)</span>: Well-diversified with stable holdings</li>
+                <li>• <span className="text-warning font-medium">Medium (40-69)</span>: Some concentration but manageable</li>
+                <li>• <span className="text-destructive font-medium">High (70-100)</span>: Significant concentration requiring attention</li>
+              </ul>
+            </div>
+          </div>
         </CardContent>
       </Card>
+
+      {/* AI Risk Advisor */}
+      <RiskAdvisorChat
+        portfolioData={{
+          totalValue: metrics.totalValue,
+          holdingsCount: metrics.holdingsCount,
+          riskScore: metrics.riskScore,
+          avgVolatility: metrics.avgVolatility,
+          sectorConcentration: metrics.sectorConcentration,
+          topSector: metrics.topSector?.[0] || 'N/A',
+          regionConcentration: metrics.regionConcentration,
+          topRegion: metrics.topRegion?.[0] || 'N/A',
+        }}
+      />
 
       <StockDetailModal
         open={!!selectedHolding}
