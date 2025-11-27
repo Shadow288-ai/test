@@ -41,11 +41,12 @@ export function StockDetailModal({ open, onOpenChange, holding }: StockDetailMod
     try {
       setLoading(true);
       const days = TIMEFRAME_DAYS[selectedTimeframe];
-      const [price, history] = await Promise.all([
-        fetchCurrentPrice(holding.stock_ticker),
-        fetchHistoricalData(holding.stock_ticker, days),
-      ]);
-      setCurrentPrice(price);
+      
+      // Calculate current price from database market_value
+      const priceFromDb = Number(holding.market_value) / Number(holding.shares);
+      setCurrentPrice(priceFromDb);
+      
+      const history = await fetchHistoricalData(holding.stock_ticker, days);
       setHisticalData(history);
     } catch (error) {
       console.error('Error loading stock data:', error);
@@ -57,7 +58,7 @@ export function StockDetailModal({ open, onOpenChange, holding }: StockDetailMod
   if (!holding) return null;
 
   const purchaseValue = Number(holding.cost_basis) * Number(holding.shares);
-  const currentValue = currentPrice ? currentPrice * Number(holding.shares) : Number(holding.market_value);
+  const currentValue = Number(holding.market_value); // Use database value directly
   const gainLoss = currentValue - purchaseValue;
   const gainLossPercent = (gainLoss / purchaseValue) * 100;
   const isPositive = gainLoss >= 0;
