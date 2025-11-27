@@ -35,10 +35,12 @@ import {
   DollarSign,
   PieChartIcon,
   AlertTriangle,
+  RefreshCw,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency, formatNumber } from "@/utils/formatNumber";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 import {
   refreshTopHoldingsPricesForCurrentUser,
   TopRefreshResult,
@@ -52,6 +54,7 @@ export default function ClientDashboard() {
   const [selectedHolding, setSelectedHolding] = useState<any | null>(null);
   const [selectedMetric, setSelectedMetric] = useState<string | null>(null);
   const [isRefreshingTop, setIsRefreshingTop] = useState(false);
+  const [isRefreshingAll, setIsRefreshingAll] = useState(false);
 
   const fetchPortfolioData = async () => {
   if (!user) return;
@@ -95,6 +98,40 @@ export default function ClientDashboard() {
     fetchPortfolioData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, location.state]);
+
+  // Manual refresh ALL prices via edge function
+  const handleRefreshAllPrices = async () => {
+    if (!user) return;
+    
+    setIsRefreshingAll(true);
+    toast.info("Updating all stock prices...", { 
+      description: "This may take a few moments" 
+    });
+
+    try {
+      const { data, error } = await supabase.functions.invoke('update-stock-prices', {
+        body: {}
+      });
+
+      if (error) throw error;
+
+      console.log('[ClientDashboard] Price update result:', data);
+
+      // Refresh portfolio data from database
+      await fetchPortfolioData();
+
+      toast.success("Prices updated successfully!", {
+        description: `Updated ${data.totalUpdated || 0} holdings`
+      });
+    } catch (error: any) {
+      console.error('[ClientDashboard] Error updating prices:', error);
+      toast.error("Failed to update prices", {
+        description: error.message || "Please try again later"
+      });
+    } finally {
+      setIsRefreshingAll(false);
+    }
+  };
 
   // Manual refresh for top holdings prices (no automatic overwrite on mount)
   const handleRefreshTopPrices = async () => {
@@ -469,11 +506,23 @@ export default function ClientDashboard() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">My Portfolio</h1>
-        <p className="text-muted-foreground mt-1">
-          Your personalized risk assessment and portfolio insights
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">My Portfolio</h1>
+          <p className="text-muted-foreground mt-1">
+            Your personalized risk assessment and portfolio insights
+          </p>
+        </div>
+        <Button
+          onClick={handleRefreshAllPrices}
+          disabled={isRefreshingAll}
+          variant="outline"
+          size="sm"
+          className="gap-2"
+        >
+          <RefreshCw className={cn("h-4 w-4", isRefreshingAll && "animate-spin")} />
+          {isRefreshingAll ? "Updating..." : "Refresh Prices"}
+        </Button>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
