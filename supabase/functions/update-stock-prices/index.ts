@@ -17,13 +17,18 @@ interface YahooQuoteResponse {
 
 async function fetchYahooPrice(symbol: string): Promise<number | null> {
   try {
-    const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(symbol)}`;
+    // Use Yahoo Finance v8 API with proper headers
+    const url = `https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=1d`;
     
     console.log(`[update-stock-prices] Fetching price for ${symbol}`);
     
     const response = await fetch(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept': 'application/json',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Origin': 'https://finance.yahoo.com',
+        'Referer': 'https://finance.yahoo.com/',
       },
     });
 
@@ -32,15 +37,15 @@ async function fetchYahooPrice(symbol: string): Promise<number | null> {
       return null;
     }
 
-    const data: YahooQuoteResponse = await response.json();
+    const data = await response.json();
     
-    if (!data.quoteResponse?.result?.[0]) {
+    const quote = data?.chart?.result?.[0]?.meta;
+    if (!quote) {
       console.warn(`[update-stock-prices] No data for ${symbol}`);
       return null;
     }
 
-    const quote = data.quoteResponse.result[0];
-    const price = quote.regularMarketPrice ?? quote.regularMarketPreviousClose;
+    const price = quote.regularMarketPrice ?? quote.previousClose;
 
     if (!price || isNaN(price)) {
       console.warn(`[update-stock-prices] Invalid price for ${symbol}`);
