@@ -103,16 +103,39 @@ export default function Upload() {
 
           const clientIdToUse = user.id;
 
-          // Get the existing portfolio - use the known ID to avoid RLS issues
-          const portfolioId = 'd21c4285-1b8d-45cc-9124-d348de8a3ca5';
+          // Get or create portfolio for this client
+          let { data: existingPortfolio } = await supabase
+            .from('client_portfolios')
+            .select('id')
+            .eq('client_id', clientIdToUse)
+            .single();
+
+          let portfolioId: string;
+
+          if (!existingPortfolio) {
+            // Create new portfolio for this client
+            const { data: newPortfolio, error: portfolioError } = await supabase
+              .from('client_portfolios')
+              .insert({
+                client_id: clientIdToUse,
+                portfolio_name: 'My Portfolio'
+              })
+              .select('id')
+              .single();
+
+            if (portfolioError) throw portfolioError;
+            portfolioId = newPortfolio.id;
+          } else {
+            portfolioId = existingPortfolio.id;
+          }
           
           console.log('Using portfolio:', portfolioId);
           
-          // Delete existing holdings for this portfolio to replace with new data
+          // Delete existing holdings for THIS CLIENT to replace with new data
           await supabase
             .from('portfolio_holdings')
             .delete()
-            .eq('portfolio_id', portfolioId);
+            .eq('client_id', clientIdToUse);
 
           // Import stock utilities
           const { getStockInfo, fetchCurrentPrice, fetchHistoricalData, calculateVolatility } = await import('@/utils/stockData');
