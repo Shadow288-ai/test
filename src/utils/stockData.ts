@@ -191,25 +191,85 @@ export const fetchHistoricalData = async (ticker: string, days: number = 30) => 
   const stockInfo = getStockInfo(ticker);
   const isETF = stockInfo.sector.includes('ETF');
   
-  // Realistic daily volatility ranges
-  const volatility = isCrypto ? 0.03 : isETF ? 0.008 : 0.015;
+  // Realistic volatility ranges per interval
+  const baseVolatility = isCrypto ? 0.03 : isETF ? 0.008 : 0.015;
   
-  // Generate historical prices with realistic trend
+  // For 1 day, generate hourly data points (more granular)
+  if (days === 1) {
+    const historicalData = [];
+    const intervals = 24; // 24 hours
+    let price = currentPrice;
+    
+    for (let i = intervals - 1; i >= 0; i--) {
+      const hoursAgo = i;
+      const date = new Date(Date.now() - hoursAgo * 60 * 60 * 1000);
+      
+      historicalData.push({
+        date: date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+        price: Math.max(price, 0.01),
+      });
+      
+      // Hourly volatility (much smaller)
+      const hourlyVolatility = baseVolatility / Math.sqrt(24);
+      const hourlyChange = (Math.random() - 0.5) * hourlyVolatility;
+      price = price / (1 + hourlyChange);
+    }
+    
+    return historicalData.reverse();
+  }
+  
+  // For 5 days, generate data every 4 hours
+  if (days === 5) {
+    const historicalData = [];
+    const intervals = days * 6; // 6 intervals per day
+    let price = currentPrice;
+    
+    for (let i = intervals - 1; i >= 0; i--) {
+      const hoursAgo = i * 4;
+      const date = new Date(Date.now() - hoursAgo * 60 * 60 * 1000);
+      
+      historicalData.push({
+        date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' + 
+               date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+        price: Math.max(price, 0.01),
+      });
+      
+      const intervalVolatility = baseVolatility / Math.sqrt(6);
+      const intervalChange = (Math.random() - 0.5) * intervalVolatility;
+      price = price / (1 + intervalChange);
+    }
+    
+    return historicalData.reverse();
+  }
+  
+  // For longer periods, use daily data
   const historicalData = [];
   let price = currentPrice;
   
-  // Work backwards from current price
+  // Add slight upward trend for realistic market behavior
+  const trendBias = days > 365 ? 0.0002 : 0.0001;
+  
   for (let i = days - 1; i >= 0; i--) {
     const daysAgo = i;
     const date = new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000);
     
+    // Format date based on timeframe
+    let dateStr: string;
+    if (days <= 30) {
+      dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    } else if (days <= 180) {
+      dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    } else {
+      dateStr = date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+    }
+    
     historicalData.push({
-      date: date.toLocaleDateString(),
+      date: dateStr,
       price: Math.max(price, 0.01),
     });
     
-    // Calculate previous day's price with random walk
-    const dailyChange = (Math.random() - 0.48) * volatility; // Slight upward bias
+    // Calculate previous day's price with random walk and slight upward bias
+    const dailyChange = (Math.random() - 0.48 + trendBias) * baseVolatility;
     price = price / (1 + dailyChange);
   }
   
