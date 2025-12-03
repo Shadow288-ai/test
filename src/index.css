@@ -191,18 +191,31 @@ All colors MUST be HSL.
 /* Liquid Glass Effects */
 @layer components {
   .glass-card {
-    --bg-color: rgba(255, 255, 255, 0.15);
-    --highlight: rgba(255, 255, 255, 0.4);
+    --bg-color: rgba(255, 255, 255, 0.02);
+    --highlight: rgba(255, 255, 255, 0.75);
     --text: hsl(var(--foreground));
     
     position: relative;
     border-radius: var(--radius);
     overflow: hidden;
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+    background: transparent !important;
+  }
+
+  /* Override any bg-card or other background classes on glass cards */
+  .glass-card.bg-card,
+  .glass-card[class*="bg-"] {
+    background: transparent !important;
+  }
+
+  /* Ensure glass-content doesn't have background */
+  .glass-card .glass-content {
+    background: transparent !important;
   }
 
   .glass-filter,
   .glass-overlay,
+  .glass-distortion-overlay,
   .glass-specular {
     position: absolute;
     inset: 0;
@@ -211,15 +224,16 @@ All colors MUST be HSL.
 
   .glass-filter {
     z-index: 1;
-    backdrop-filter: blur(12px) saturate(180%);
-    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    filter: url(#glass-distortion) saturate(120%) brightness(1.15);
   }
 
   .glass-distortion-overlay {
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.08) 0%, transparent 80%),
-                radial-gradient(circle at 80% 70%, rgba(255,255,255,0.08) 0%, transparent 80%);
+    background: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.05) 0%, transparent 80%),
+                radial-gradient(circle at 80% 70%, rgba(255,255,255,0.05) 0%, transparent 80%);
     background-size: 300% 300%;
     animation: floatDistort 10s infinite ease-in-out;
     mix-blend-mode: overlay;
@@ -236,6 +250,7 @@ All colors MUST be HSL.
   .glass-overlay {
     z-index: 2;
     background: var(--bg-color);
+    opacity: 0.1;
   }
 
   .glass-specular {
@@ -247,6 +262,8 @@ All colors MUST be HSL.
   .glass-content {
     position: relative;
     z-index: 4;
+    padding: 20px;
+    color: var(--text);
   }
 
   /* Glass button variant */
@@ -266,13 +283,15 @@ All colors MUST be HSL.
 
   .glass-button .glass-filter {
     z-index: 1;
-    backdrop-filter: blur(12px) saturate(180%);
-    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    filter: url(#glass-distortion) saturate(120%) brightness(1.15);
   }
 
   .glass-button .glass-overlay {
     z-index: 2;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    opacity: 0.3;
   }
 
   .glass-button .glass-distortion-overlay {
@@ -299,8 +318,8 @@ All colors MUST be HSL.
   /* Dark mode adjustments */
   @media (prefers-color-scheme: dark) {
     .glass-card {
-      --bg-color: rgba(0, 0, 0, 0.2);
-      --highlight: rgba(255, 255, 255, 0.1);
+      --bg-color: rgba(0, 0, 0, 0.05);
+      --highlight: rgba(255, 255, 255, 0.15);
     }
   }
 }

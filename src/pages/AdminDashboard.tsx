@@ -97,18 +97,26 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 relative z-20">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">
+            Admin Dashboard
+          </h1>
+          <p className="text-muted-foreground mt-2 text-lg">
             Overview of all client portfolios and risk metrics
           </p>
         </div>
         <Link to="/admin/clients">
-          <Button className="gap-2">
-            <Users className="h-4 w-4" />
-            View All Clients
+          <Button className="gap-2 glass-button relative overflow-hidden">
+            <div className="glass-filter"></div>
+            <div className="glass-overlay"></div>
+            <div className="glass-distortion-overlay"></div>
+            <div className="glass-specular"></div>
+            <span className="relative z-10 flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              View All Clients
+            </span>
           </Button>
         </Link>
       </div>
@@ -140,11 +148,16 @@ export default function AdminDashboard() {
         />
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Client Risk Distribution</CardTitle>
-          <CardDescription>Breakdown of clients by risk tier</CardDescription>
-        </CardHeader>
+      <Card className="glass-card border-border/30 relative overflow-hidden">
+        <div className="glass-filter"></div>
+        <div className="glass-overlay"></div>
+        <div className="glass-distortion-overlay"></div>
+        <div className="glass-specular"></div>
+        <div className="glass-content relative z-10">
+          <CardHeader>
+            <CardTitle>Client Risk Distribution</CardTitle>
+            <CardDescription>Breakdown of clients by risk tier</CardDescription>
+          </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
@@ -167,6 +180,7 @@ export default function AdminDashboard() {
             </PieChart>
           </ResponsiveContainer>
         </CardContent>
+        </div>
       </Card>
     </div>
   );

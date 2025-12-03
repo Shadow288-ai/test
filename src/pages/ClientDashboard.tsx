@@ -505,11 +505,13 @@ export default function ClientDashboard() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 relative z-20">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">My Portfolio</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">
+            My Portfolio
+          </h1>
+          <p className="text-muted-foreground mt-2 text-lg">
             Your personalized risk assessment and portfolio insights
           </p>
         </div>
@@ -518,10 +520,16 @@ export default function ClientDashboard() {
           disabled={isRefreshingAll}
           variant="outline"
           size="sm"
-          className="gap-2"
+          className="gap-2 glass-button relative overflow-hidden"
         >
-          <RefreshCw className={cn("h-4 w-4", isRefreshingAll && "animate-spin")} />
-          {isRefreshingAll ? "Updating..." : "Refresh Prices"}
+          <div className="glass-filter"></div>
+          <div className="glass-overlay"></div>
+          <div className="glass-distortion-overlay"></div>
+          <div className="glass-specular"></div>
+          <span className="relative z-10 flex items-center gap-2">
+            <RefreshCw className={cn("h-4 w-4", isRefreshingAll && "animate-spin")} />
+            {isRefreshingAll ? "Updating..." : "Refresh Prices"}
+          </span>
         </Button>
       </div>
 
@@ -543,21 +551,27 @@ export default function ClientDashboard() {
           onClick={() => setSelectedMetric("gainLoss")}
         />
         <Card
-          className="bg-gradient-card border-border/50 shadow-md hover:shadow-lg transition-all cursor-pointer hover:scale-105"
+          className="glass-card border-border/50 shadow-md hover:shadow-lg transition-all cursor-pointer hover:scale-105 relative overflow-hidden"
           onClick={() => setSelectedMetric("riskScore")}
         >
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Risk Score
-            </CardTitle>
-            <AlertTriangle className="h-4 w-4 text-primary" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{metrics.riskScore}</div>
-            <div className="mt-2">
-              <RiskBadge level={metrics.riskLevel as any} />
-            </div>
-          </CardContent>
+          <div className="glass-filter"></div>
+          <div className="glass-overlay"></div>
+          <div className="glass-distortion-overlay"></div>
+          <div className="glass-specular"></div>
+          <div className="glass-content relative z-10">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Risk Score
+              </CardTitle>
+              <AlertTriangle className="h-4 w-4 text-primary" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{metrics.riskScore}</div>
+              <div className="mt-2">
+                <RiskBadge level={metrics.riskLevel as any} />
+              </div>
+            </CardContent>
+          </div>
         </Card>
         <MetricCard
           title="Holdings"
@@ -569,11 +583,16 @@ export default function ClientDashboard() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <Card className="bg-black/5 dark:bg-black/20">
-          <CardHeader>
-            <CardTitle>Asset Allocation</CardTitle>
-            <CardDescription>Distribution by asset type</CardDescription>
-          </CardHeader>
+        <Card className="glass-card border-border/30 relative overflow-hidden">
+          <div className="glass-filter"></div>
+          <div className="glass-overlay"></div>
+          <div className="glass-distortion-overlay"></div>
+          <div className="glass-specular"></div>
+          <div className="glass-content relative z-10">
+            <CardHeader>
+              <CardTitle>Asset Allocation</CardTitle>
+              <CardDescription>Distribution by asset type</CardDescription>
+            </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={350}>
               <PieChart>
@@ -620,27 +639,38 @@ export default function ClientDashboard() {
                 />
               </PieChart>
             </ResponsiveContainer>
-          </CardContent>
+            </CardContent>
+          </div>
         </Card>
 
-        <Card>
-          {/* These are the stock prices */}
-          <CardHeader className="flex items-center justify-between">
-            <div>
-              <CardTitle>Top Holdings</CardTitle>
-              <CardDescription>
-                Largest positions by market value
-              </CardDescription>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleRefreshTopPrices}
-              disabled={isRefreshingTop || topHoldings.length === 0}
-            >
-              {isRefreshingTop ? "Refreshing..." : "Refresh prices"}
-            </Button>
-          </CardHeader>
+        <Card className="glass-card border-border/30 relative overflow-hidden">
+          <div className="glass-filter"></div>
+          <div className="glass-overlay"></div>
+          <div className="glass-distortion-overlay"></div>
+          <div className="glass-specular"></div>
+          <div className="glass-content relative z-10">
+            {/* These are the stock prices */}
+            <CardHeader className="flex items-center justify-between">
+              <div>
+                <CardTitle>Top Holdings</CardTitle>
+                <CardDescription>
+                  Largest positions by market value
+                </CardDescription>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRefreshTopPrices}
+                disabled={isRefreshingTop || topHoldings.length === 0}
+                className="glass-button relative overflow-hidden"
+              >
+                <div className="glass-filter"></div>
+                <div className="glass-overlay"></div>
+                <div className="glass-distortion-overlay"></div>
+                <div className="glass-specular"></div>
+                <span className="relative z-10">{isRefreshingTop ? "Refreshing..." : "Refresh prices"}</span>
+              </Button>
+            </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {topHoldings.map((holding) => {
@@ -655,9 +685,14 @@ export default function ClientDashboard() {
                 return (
                   <div
                     key={holding.id}
-                    className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors cursor-pointer"
+                    className="glass-card flex items-center justify-between p-3 border border-border/20 hover:border-primary/30 transition-all cursor-pointer hover:scale-[1.02] relative overflow-hidden"
                     onClick={() => setSelectedHolding(holding)}
                   >
+                    <div className="glass-filter"></div>
+                    <div className="glass-overlay"></div>
+                    <div className="glass-distortion-overlay"></div>
+                    <div className="glass-specular"></div>
+                    <div className="glass-content flex items-center justify-between w-full relative z-10">
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <p className="font-medium">{holding.stock_ticker}</p>
@@ -682,24 +717,31 @@ export default function ClientDashboard() {
                         {gainLossPercent.toFixed(2)}%
                       </p>
                     </div>
-                    <p className="text-lg font-semibold">
-                      {formatCurrency(Number(holding.market_value))}
-                    </p>
+                      <p className="text-lg font-semibold">
+                        {formatCurrency(Number(holding.market_value))}
+                      </p>
+                    </div>
                   </div>
                 );
               })}
             </div>
           </CardContent>
+          </div>
         </Card>
       </div>
 
-      <Card className="bg-black/5 dark:bg-black/20">
-        <CardHeader>
-          <CardTitle>Sector Breakdown</CardTitle>
-          <CardDescription>
-            Portfolio value distribution by sector
-          </CardDescription>
-        </CardHeader>
+      <Card className="glass-card border-border/30 relative overflow-hidden">
+        <div className="glass-filter"></div>
+        <div className="glass-overlay"></div>
+        <div className="glass-distortion-overlay"></div>
+        <div className="glass-specular"></div>
+        <div className="glass-content relative z-10">
+          <CardHeader>
+            <CardTitle>Sector Breakdown</CardTitle>
+            <CardDescription>
+              Portfolio value distribution by sector
+            </CardDescription>
+          </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={350}>
             <BarChart
@@ -766,15 +808,21 @@ export default function ClientDashboard() {
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
+        </div>
       </Card>
 
-      <Card className="bg-card/50">
-        <CardHeader>
-          <CardTitle>Risk Score Explanation</CardTitle>
-          <CardDescription>
-            Understanding how your risk score is calculated
-          </CardDescription>
-        </CardHeader>
+      <Card className="glass-card border-border/30 relative overflow-hidden">
+        <div className="glass-filter"></div>
+        <div className="glass-overlay"></div>
+        <div className="glass-distortion-overlay"></div>
+        <div className="glass-specular"></div>
+        <div className="glass-content relative z-10">
+          <CardHeader>
+            <CardTitle>Risk Score Explanation</CardTitle>
+            <CardDescription>
+              Understanding how your risk score is calculated
+            </CardDescription>
+          </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div>
@@ -804,6 +852,7 @@ export default function ClientDashboard() {
             </div>
           </div>
         </CardContent>
+        </div>
       </Card>
 
       {/* AI Risk Advisor */}
