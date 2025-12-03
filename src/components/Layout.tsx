@@ -3,7 +3,6 @@ import { BarChart3, Upload, HelpCircle, Users, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import logo from '@/assets/risktwo-logo.png';
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
@@ -30,7 +29,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-3">
-              <img src={logo} alt="RiskTwo" className="h-10 object-contain" />
+              <img src="/favicon.png" alt="RiskTwo" className="h-10 object-contain" />
             </div>
             <div className="flex items-center gap-8">
               <div className="flex gap-1">

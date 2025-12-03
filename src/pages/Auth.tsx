@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import logo from '@/assets/risktwo-logo.png';
 
 export default function Auth() {
   const [email, setEmail] = useState('');
@@ -64,7 +63,7 @@ const handleSignIn = async (e: React.FormEvent) => {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center space-y-4">
           <div className="flex justify-center">
-            <img src={logo} alt="RiskTwo" className="h-20 object-contain" />
+            <img src="/favicon.png" alt="RiskTwo" className="h-20 object-contain" />
           </div>
           <CardTitle className="text-2xl">Welcome to RiskTwo</CardTitle>
           <CardDescription>
