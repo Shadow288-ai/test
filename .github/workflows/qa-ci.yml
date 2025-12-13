@@ -6,31 +6,41 @@ on:
     branches: [ main, master ]
 
 jobs:
-  tests:
+  test:
     runs-on: ubuntu-latest
 
     steps:
+      # 1) Checkout your code
       - uses: actions/checkout@v4
 
+      # 2) Setup Node.js
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
 
-      - name: Install
+      # 3) Install dependencies
+      - name: Install dependencies
         run: npm ci
 
-      - name: Run tests
+      # 4) Run tests and produce a JUnit XML report
+      - name: Run Vitest and write JUnit XML
         run: |
           mkdir -p qa-results
           npx vitest run \
-            --reporter=json --outputFile.json=qa-results/vitest.json
+            --reporter=junit --outputFile.junit=qa-results/vitest-results.xml
 
-      - name: Generate QA Markdown report
-        run: node scripts/generate-qa-report.js
-
-      - name: Upload QA artifacts
+      # 5) Upload the XML test report as an artifact
+      - name: Upload test results (JUnit XML)
         uses: actions/upload-artifact@v4
         with:
-          name: qa-results
-          path: qa-results/*.md
+          name: junit-test-results
+          path: qa-results/vitest-results.xml
+
+      # (Optional) 6) Show XML report in GitHub UI test summary
+      - name: Publish test report in UI
+        uses: dorny/test-reporter@v2
+        with:
+          name: Unit Tests
+          path: qa-results/vitest-results.xml
+          reporter: java-junit
