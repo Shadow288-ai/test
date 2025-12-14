@@ -1,0 +1,8 @@
+npm install //needed before running     //delete folder node modules v=before pushing
+
+npm install jsdom@24.0.0 --save-dev     //if it bugs run this first
+npm run test:run
+
+npx vitest                              //to run test, this should also work
+
+npm run dev                             //to run server on localHost
