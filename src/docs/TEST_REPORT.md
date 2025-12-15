@@ -53,7 +53,6 @@ This report reflects testing activities conducted by the QA Engineer within the 
 
 **Tools**
 - Vitest
-- Playwright
 - ESLint + TS
 - Coverage reporter
 - GitHub Actions
