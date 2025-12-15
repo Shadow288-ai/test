@@ -1,4 +1,3 @@
-
 ## What technologies are used for this project?
 
 This project is built with:
@@ -9,14 +8,18 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
-## How can I deploy this project?
+---
 
-Simply open [Lovable](https://lovable.dev/projects/2741a8f5-b92d-4074-905d-6f9537d684de) and click on Share -> Publish.
+ ## How can i use the application without running it localy?
 
-## Can I connect a custom domain to my Lovable project?
+ You can acces the webapp anytime by typing in this url: https://risktwotwo.netlify.app/ 
+ We use netlify so that the code is reachable 24/7
 
-Yes, you can!
+ ## Where are the reports and other important documents located?
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+ All the important documents related to the projects reports or help texts tied to the commands can be found in the
+ docs folder. 
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+ The docs folder is located in the src folder which is located in the projects root.
+
+ For further questions please look at the documents in the docs folder, and if those dont answer your questions feel free to contact our project lead.
