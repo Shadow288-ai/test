@@ -6,8 +6,8 @@ This report reflects testing activities conducted by the QA Engineer within the 
 ---
 
 ## 1. Testing Period
-**Start:** 2025-02-10  
-**End:** 2025-02-17
+**Start:** 2025-09-30  
+**End:** 2025-12-15
 
 ---
 
