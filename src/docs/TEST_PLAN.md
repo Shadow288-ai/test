@@ -73,7 +73,6 @@ Defects will be logged and tracked using GitHub Issues with consistent labeling.
 ## 6. Test Deliverables
 
 - Automated test suite (unit + component)
-- E2E test suite (Playwright or similar, where applicable)
 - GitHub Actions test reports (JUnit XML)
 - Coverage reports (HTML/text)
 - `TEST_PLAN.md`
