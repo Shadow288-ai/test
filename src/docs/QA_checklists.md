@@ -5,22 +5,6 @@ This document defines repeatable QA checks for the RiskTwo web app. It is design
 
 ---
 
-## How to use this document
-### Status labels
-- ✅ **PASS** = item behaves as expected
-- ⚠️ **PASS (Risk)** = item works but with known concerns (slow, flaky, unclear requirements, mismatched docs)
-- ❌ **FAIL** = item does not behave as expected
-
-### Release readiness (simple rule)
-- **GREEN**: All Smoke items ✅
-- **YELLOW**: Smoke ✅ but there are ⚠️ risks (non-blocking)
-- **RED**: Any Smoke item ❌ OR any blocker bug found
-
-### Golden rule (keeps the checklist strong)
-Whenever a bug escapes or surprises you, add **one new checklist item** that would have caught it next time.
-
----
-
 ## Test environment (Local)
 ### Run the app
 - Install deps: `npm ci` (or `npm install`)
