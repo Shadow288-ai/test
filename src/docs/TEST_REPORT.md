@@ -35,7 +35,6 @@ This report reflects testing activities conducted by the QA Engineer within the 
 | Test Framework | Vitest |
 | CI Pipeline | GitHub Actions |
 | Coverage | Vitest coverage (HTML + summary) |
-| E2E Testing | Playwright (integrated where applicable) |
 | Backend | Supabase development environment |
 
 ---
