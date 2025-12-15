@@ -204,19 +204,11 @@ Different parts of the app may categorize risk tiers using different thresholds.
 ---
 
 # Bug report template (copy/paste)
-**Title:**  
-**Environment:** Local | branch/commit | browser | OS  
-**Steps to reproduce:**  
-1.  
-2.  
-3.  
-**Expected result:**  
-**Actual result:**  
-**Evidence:** screenshot/video  
-**Console errors:** (copy/paste)  
-**Network/API notes:** (failing request, status code, response)  
-**Severity:** Blocker / Major / Minor  
-**Notes:** (any extra context)
+**Id(example #341)**  
+**Description of the bug:**   
+**Severity:** Blocker / Major / Minor...
+**Status of the report:** Reslove / Open / In progress
+**Notes:** (any extra context if needed)
 
 ---
 
