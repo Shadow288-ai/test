@@ -6,3 +6,6 @@ npm run test:run
 npx vitest                              //to run test, this should also work
 
 npm run dev                             //to run server on localHost
+
+
+npm run test:coverage           //shows coverage of the general code
