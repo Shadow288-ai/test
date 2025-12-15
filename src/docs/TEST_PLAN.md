@@ -1,16 +1,5 @@
 # QA Test Plan
 
-## Project Team Context
-The project is developed by a cross-functional team with the following roles:
-- **Software Engineer:** Responsible for implementing features, fixing bugs, writing core application logic, and supporting testability.
-- **QA Engineer:** Responsible for designing and executing test cases, writing and maintaining automated tests, documenting defects, and producing QA deliverables.
-- **Team Lead:** Oversees project progress, coordinates between team members, reviews QA deliverables, and ensures project milestones are met.
-- **Business Analyst:** Works with stakeholders to define requirements, acceptance criteria, and clarifications on feature behaviors.
-
-This test plan reflects the contributions and responsibilities of the QA Engineer and how testing aligns with overall project roles.
-
----
-
 ## 1. Objectives
 The goal of this test plan is to define the strategy, scope, and activities to ensure quality of the software according to the defined requirements. Key objectives include:
 
