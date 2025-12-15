@@ -71,7 +71,7 @@ Other:
 
 ---
 
-# SMOKE CHECKLIST (10–20 minutes)
+# SMOKE CHECKLIST
 Run this:
 - Before demos / deadlines
 - After major merges
@@ -124,7 +124,7 @@ CSV expected columns:
 
 ---
 
-# REGRESSION CHECKLIST (45–90 minutes)
+# REGRESSION CHECKLIST 
 Run this:
 - Before a release/deadline (when you need confidence)
 - Weekly (if the app changes frequently)
@@ -183,25 +183,6 @@ Important behavior expectation:
 
 ---
 
-# CONSISTENCY / WATCH-OUTS (Known risk areas)
-Use this section to track “weirdness” so it doesn’t get forgotten.
-
-## A) CSV schema mismatch risk
-- Upload validation expects `Ticker,Purchase_Price,Quantity`
-- Help/Docs may describe a different CSV format
-
-✅ Action:
-- Confirm the intended “source of truth” with dev/product
-- Update either Upload validation or Help docs so they match
-
-## B) Risk thresholds mismatch risk
-Different parts of the app may categorize risk tiers using different thresholds.
-
-✅ Action:
-- Pick a portfolio score and confirm the tier shown is consistent across UI and scoring logic
-- If inconsistent, log a bug and agree on one rule
-
----
 
 # Bug report template (copy/paste)
 **Id(example #341)**  
