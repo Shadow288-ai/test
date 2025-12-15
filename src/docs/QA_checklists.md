@@ -185,11 +185,11 @@ Important behavior expectation:
 
 
 # Bug report template (copy/paste)
-**Id(example #341)**  
-**Description of the bug:**   
-**Severity:** Blocker / Major / Minor...
-**Status of the report:** Reslove / Open / In progress
-**Notes:** (any extra context if needed)
+- **Id(example #341)**  
+- **Description of the bug:**   
+- **Severity:** Blocker / Major / Minor...
+- **Status of the report:** Reslove / Open / In progress
+- **Notes:** (any extra context if needed)
 
 ---
 
