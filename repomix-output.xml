@@ -1,10 +1,10 @@
-This file is a merged representation of a subset of the codebase, containing specifically included files, combined into a single document by Repomix.
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
 
 <file_summary>
 This section contains a summary of this file.
 
 <purpose>
-This file contains a packed representation of a subset of the repository's contents that is considered the most important context.
+This file contains a packed representation of the entire repository's contents.
 It is designed to be easily consumable by AI systems for analysis, code review,
 or other automated processes.
 </purpose>
@@ -32,7 +32,6 @@ The content is organized as follows:
 <notes>
 - Some files may have been excluded based on .gitignore rules and Repomix's configuration
 - Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
-- Only files matching these patterns are included: .github, node_modules, public, src, src/assets, src/components, src/data, src/docs, src/hooks, src/integrations, src/lib, src/pages, src/scripts, src/store, src/test, src/test/csvValidation.test.ts, src/test/formatNumber.test.ts, src/test/Help.txt, src/test/portfolioStore.test.ts, src/test/RiskBadge.test.tsx, src/test/riskScoring.test.ts, src/test/setup.ts, src/test/stockData.test.ts, src/types, src/utils, src/App.css, src/App.tsx, src/index.css, src/main.tsx, src/vite-env.d.ts, supabase, .env, .gitignore, bun.lockb, components.json, eslint.config.js, index.html, package-lock.json, package.json, postcss.config.js, README.md, tailwind.config.ts, tsconfig.app.json, tsconfig.json, tsconfig.node.json, vite.config.ts, vitest.config.ts
 - Files matching patterns in .gitignore are excluded
 - Files matching default ignore patterns are excluded
 - Files are sorted by Git change count (files with more changes are at the bottom)
@@ -188,271 +187,6 @@ vitest.config.ts
 
 <files>
 This section contains the contents of the repository's files.
-
-<file path="src/test/csvValidation.test.ts">
-import { describe, it, expect } from 'vitest';
-import { validateCSVStructure } from '../utils/csvValidation';
-
-describe('validateCSVStructure', () => {
-  it('should fail for empty data', () => {
-    const result = validateCSVStructure([]);
-    expect(result.isValid).toBe(false);
-    expect(result.errors).toContain('CSV file is empty');
-  });
-
-  it('should check for required columns', () => {
-    const data = [{ Foo: 1, Bar: 2 }];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const res = validateCSVStructure(data as any);
-    expect(res.isValid).toBe(false);
-    expect(res.errors[0]).toMatch(/Missing required columns/);
-  });
-
-  it('should pass for valid input', () => {
-    const data = [{
-      Ticker: 'AAPL',
-      Purchase_Price: '150.50',
-      Quantity: '10'
-    }];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const res = validateCSVStructure(data as any);
-    expect(res.isValid).toBe(true);
-    expect(res.errors.length).toBe(0);
-  });
-});
-</file>
-
-<file path="src/test/formatNumber.test.ts">
-import { formatNumber, formatCurrency } from '../utils/formatNumber';
-import { describe, it, expect } from 'vitest';
-
-describe('formatNumber', () => {
-  it('formats numbers <1000 with 2 decimals', () => {
-    expect(formatNumber(999.22)).toBe('999.22');
-  });
-
-  it('formats thousands with K', () => {
-    expect(formatNumber(5000)).toBe('5.0K');
-  });
-
-  it('formats millions with M', () => {
-    expect(formatNumber(2500000)).toBe('2.50M');
-  });
-});
-
-describe('formatCurrency', () => {
-  it('formats with correct symbol', () => {
-    expect(formatCurrency(1000, '$')).toBe('$1.0K');
-  });
-});
-</file>
-
-<file path="src/test/Help.txt">
-npm install needed before running //delete folder node modules v=before pushing
-
-npm install jsdom@24.0.0 --save-dev //if it bugs run this first
-npm run test:run
-
-npx vitest  //to run test, this should also work
-
-npm run dev //to run server on localHost
-</file>
-
-<file path="src/test/portfolioStore.test.ts">
-import { describe, it, expect, beforeEach } from 'vitest';
-import { act } from '@testing-library/react';
-// Import points back to store folder
-import { usePortfolioStore } from '../store/portfolioStore';
-
-const mockHolding = {
-  Client_ID: '1',
-  Stock_Ticker: 'AAPL',
-  Stock_Name: 'Apple Inc',
-  Sector: 'Technology',
-  Region: 'US',
-  Shares: 10,
-  Market_Value: 1500,
-  Volatility: 20,
-  Acquisition_Date: '2024-01-01',
-  Cost_Basis: 1400,
-  Portfolio_Weight: 10,
-};
-
-const mockRiskScore = {
-  clientId: '1',
-  riskLevel: 'Low' as const,
-  riskScore: 30,
-  totalValue: 10000,
-  holdingsCount: 5,
-  avgVolatility: 15,
-  sectorConcentration: 20,
-  topSector: 'Tech',
-  regionConcentration: 10,
-  topRegion: 'US',
-};
-
-describe('usePortfolioStore', () => {
-  beforeEach(() => {
-    act(() => {
-      usePortfolioStore.getState().clearData();
-    });
-  });
-
-  it('should start with empty initial state', () => {
-    const state = usePortfolioStore.getState();
-    expect(state.holdings).toEqual([]);
-    expect(state.riskScores).toEqual([]);
-  });
-
-  it('should update holdings', () => {
-    act(() => {
-      usePortfolioStore.getState().setHoldings([mockHolding]);
-    });
-    
-    const state = usePortfolioStore.getState();
-    expect(state.holdings).toHaveLength(1);
-    expect(state.holdings[0].Stock_Ticker).toBe('AAPL');
-  });
-
-  it('should update risk scores', () => {
-    act(() => {
-      usePortfolioStore.getState().setRiskScores([mockRiskScore]);
-    });
-
-    const state = usePortfolioStore.getState();
-    expect(state.riskScores).toHaveLength(1);
-    expect(state.riskScores[0].riskLevel).toBe('Low');
-  });
-
-  it('should clear all data', () => {
-    act(() => {
-      usePortfolioStore.getState().setHoldings([mockHolding]);
-      usePortfolioStore.getState().setRiskScores([mockRiskScore]);
-    });
-
-    act(() => {
-      usePortfolioStore.getState().clearData();
-    });
-
-    const state = usePortfolioStore.getState();
-    expect(state.holdings).toEqual([]);
-    expect(state.riskScores).toEqual([]);
-  });
-});
-</file>
-
-<file path="src/test/RiskBadge.test.tsx">
-import * as React from 'react';
-import { describe, it, expect, afterEach } from 'vitest';
-import { render, screen, cleanup } from '@testing-library/react';
-import { RiskBadge } from '../components/RiskBadge';
-
-describe('RiskBadge', () => {
-  // Force cleanup after each test to ensure a clean DOM
-  afterEach(() => {
-    cleanup();
-  });
-
-  it('renders Low Risk with success styling', () => {
-    render(<RiskBadge level="Low" />);
-    const badge = screen.getByText('Low Risk');
-    expect(badge).toBeInTheDocument();
-    expect(badge.className).toContain('bg-success');
-  });
-
-  it('renders Medium Risk with warning styling', () => {
-    render(<RiskBadge level="Medium" />);
-    const badge = screen.getByText('Medium Risk');
-    expect(badge).toBeInTheDocument();
-    expect(badge.className).toContain('bg-warning');
-  });
-
-  it('renders High Risk with destructive styling', () => {
-    render(<RiskBadge level="High" />);
-    const badge = screen.getByText('High Risk');
-    expect(badge).toBeInTheDocument();
-    expect(badge.className).toContain('bg-destructive');
-  });
-
-  it('accepts additional className props', () => {
-    // We render into a specific container to be sure, or just rely on cleanup
-    const { container } = render(<RiskBadge level="Low" className="mt-4 custom-test-class" />);
-    
-    // Check the element specifically within this render result
-    // The badge is the first child of the container in this simple component
-    const badge = container.firstChild as HTMLElement;
-    
-    expect(badge).toBeInTheDocument();
-    expect(badge.textContent).toBe('Low Risk');
-    expect(badge.className).toContain('mt-4');
-    expect(badge.className).toContain('custom-test-class');
-  });
-});
-</file>
-
-<file path="src/test/riskScoring.test.ts">
-import { calculateClientRiskScore } from '../utils/riskScoring';
-import { describe, it, expect } from 'vitest';
-
-const lowRiskHoldings = [{
-  ClientID: '1',
-  StockTicker: 'AAPL',
-  StockName: 'Apple',
-  Sector: 'Technology',
-  Region: 'US',
-  Shares: 10,
-  MarketValue: 1000,
-  Volatility: 10,
-  AcquisitionDate: '2024-01-01',
-  CostBasis: 900,
-  PortfolioWeight: 100,
-}];
-
-describe('calculateClientRiskScore', () => {
-  it('should assign low risk for low volatility', () => {
-    // dei kommentarer hei drenner mussen bleiwen vier warnings ze ignoren
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const res = calculateClientRiskScore(lowRiskHoldings as any);
-    expect(res.riskLevel).toBe('Low');
-    expect(res.riskScore).toBeLessThan(40);
-  });
-
-  it('should throw if no holdings', () => {
-    expect(() => calculateClientRiskScore([])).toThrow('No holdings provided');
-  });
-});
-</file>
-
-<file path="src/test/stockData.test.ts">
-import { describe, it, expect } from 'vitest';
-// CORRECTED IMPORT: Pointing to data/stockPrices where the logic and exports actually are
-import { getRealStockPrice, STOCK_PRICES } from '../data/stockPrices';
-
-describe('getRealStockPrice', () => {
-  it('should return the correct price for a known ticker', () => {
-    // We test with a known key from your STOCK_PRICES object
-    const aaplPrice = STOCK_PRICES['AAPL'];
-    expect(getRealStockPrice('AAPL')).toBe(aaplPrice);
-  });
-
-  it('should be case insensitive', () => {
-    const msftPrice = STOCK_PRICES['MSFT'];
-    expect(getRealStockPrice('msft')).toBe(msftPrice);
-    expect(getRealStockPrice('mSfT')).toBe(msftPrice);
-  });
-
-  it('should return null for unknown tickers', () => {
-    expect(getRealStockPrice('UNKNOWN_TICKER_999')).toBeNull();
-  });
-
-  it('should handle crypto tickers if present', () => {
-    // Verifying it handles the specific format used in your data file
-    if (STOCK_PRICES['BTC-USD']) {
-      expect(getRealStockPrice('BTC-USD')).toBe(STOCK_PRICES['BTC-USD']);
-    }
-  });
-});
-</file>
 
 <file path="src/components/HoldingsListModal.tsx">
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -2320,6 +2054,238 @@ export const usePortfolioStore = create<PortfolioStore>()(
 );
 </file>
 
+<file path="src/test/csvValidation.test.ts">
+import { describe, it, expect } from 'vitest';
+import { validateCSVStructure } from '../utils/csvValidation';
+
+describe('validateCSVStructure', () => {
+  it('should fail for empty data', () => {
+    const result = validateCSVStructure([]);
+    expect(result.isValid).toBe(false);
+    expect(result.errors).toContain('CSV file is empty');
+  });
+
+  it('should check for required columns', () => {
+    const data = [{ Foo: 1, Bar: 2 }];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const res = validateCSVStructure(data as any);
+    expect(res.isValid).toBe(false);
+    expect(res.errors[0]).toMatch(/Missing required columns/);
+  });
+
+  it('should pass for valid input', () => {
+    const data = [{
+      Ticker: 'AAPL',
+      Purchase_Price: '150.50',
+      Quantity: '10'
+    }];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const res = validateCSVStructure(data as any);
+    expect(res.isValid).toBe(true);
+    expect(res.errors.length).toBe(0);
+  });
+});
+</file>
+
+<file path="src/test/formatNumber.test.ts">
+import { formatNumber, formatCurrency } from '../utils/formatNumber';
+import { describe, it, expect } from 'vitest';
+
+describe('formatNumber', () => {
+  it('formats numbers <1000 with 2 decimals', () => {
+    expect(formatNumber(999.22)).toBe('999.22');
+  });
+
+  it('formats thousands with K', () => {
+    expect(formatNumber(5000)).toBe('5.0K');
+  });
+
+  it('formats millions with M', () => {
+    expect(formatNumber(2500000)).toBe('2.50M');
+  });
+});
+
+describe('formatCurrency', () => {
+  it('formats with correct symbol', () => {
+    expect(formatCurrency(1000, '$')).toBe('$1.0K');
+  });
+});
+</file>
+
+<file path="src/test/Help.txt">
+npm install //needed before running     //delete folder node modules v=before pushing
+
+npm install jsdom@24.0.0 --save-dev     //if it bugs run this first
+npm run test:run
+
+npx vitest                              //to run test, this should also work
+
+npm run dev                             //to run server on localHost
+</file>
+
+<file path="src/test/portfolioStore.test.ts">
+import { describe, it, expect, beforeEach } from 'vitest';
+import { act } from '@testing-library/react';
+
+import { usePortfolioStore } from '../store/portfolioStore';
+
+const mockHolding = {
+  Client_ID: '1',
+  Stock_Ticker: 'AAPL',
+  Stock_Name: 'Apple Inc',
+  Sector: 'Technology',
+  Region: 'US',
+  Shares: 10,
+  Market_Value: 1500,
+  Volatility: 20,
+  Acquisition_Date: '2024-01-01',
+  Cost_Basis: 1400,
+  Portfolio_Weight: 10,
+};
+
+const mockRiskScore = {
+  clientId: '1',
+  riskLevel: 'Low' as const,
+  riskScore: 30,
+  totalValue: 10000,
+  holdingsCount: 5,
+  avgVolatility: 15,
+  sectorConcentration: 20,
+  topSector: 'Tech',
+  regionConcentration: 10,
+  topRegion: 'US',
+};
+
+describe('usePortfolioStore', () => {
+  beforeEach(() => {
+    act(() => {
+      usePortfolioStore.getState().clearData();
+    });
+  });
+
+  it('should start with empty initial state', () => {
+    const state = usePortfolioStore.getState();
+    expect(state.holdings).toEqual([]);
+    expect(state.riskScores).toEqual([]);
+  });
+
+  it('should update holdings', () => {
+    act(() => {
+      usePortfolioStore.getState().setHoldings([mockHolding]);
+    });
+    
+    const state = usePortfolioStore.getState();
+    expect(state.holdings).toHaveLength(1);
+    expect(state.holdings[0].Stock_Ticker).toBe('AAPL');
+  });
+
+  it('should update risk scores', () => {
+    act(() => {
+      usePortfolioStore.getState().setRiskScores([mockRiskScore]);
+    });
+
+    const state = usePortfolioStore.getState();
+    expect(state.riskScores).toHaveLength(1);
+    expect(state.riskScores[0].riskLevel).toBe('Low');
+  });
+
+  it('should clear all data', () => {
+    act(() => {
+      usePortfolioStore.getState().setHoldings([mockHolding]);
+      usePortfolioStore.getState().setRiskScores([mockRiskScore]);
+    });
+
+    act(() => {
+      usePortfolioStore.getState().clearData();
+    });
+
+    const state = usePortfolioStore.getState();
+    expect(state.holdings).toEqual([]);
+    expect(state.riskScores).toEqual([]);
+  });
+});
+</file>
+
+<file path="src/test/RiskBadge.test.tsx">
+import * as React from 'react';
+import { describe, it, expect, afterEach } from 'vitest';
+import { render, screen, cleanup } from '@testing-library/react';
+import { RiskBadge } from '../components/RiskBadge';
+
+describe('RiskBadge', () => {
+ 
+  afterEach(() => {
+    cleanup();
+  });
+
+  it('renders Low Risk with success styling', () => {
+    render(<RiskBadge level="Low" />);
+    const badge = screen.getByText('Low Risk');
+    expect(badge).toBeInTheDocument();
+    expect(badge.className).toContain('bg-success');
+  });
+
+  it('renders Medium Risk with warning styling', () => {
+    render(<RiskBadge level="Medium" />);
+    const badge = screen.getByText('Medium Risk');
+    expect(badge).toBeInTheDocument();
+    expect(badge.className).toContain('bg-warning');
+  });
+
+  it('renders High Risk with destructive styling', () => {
+    render(<RiskBadge level="High" />);
+    const badge = screen.getByText('High Risk');
+    expect(badge).toBeInTheDocument();
+    expect(badge.className).toContain('bg-destructive');
+  });
+
+  it('accepts additional className props', () => {
+    
+    const { container } = render(<RiskBadge level="Low" className="mt-4 custom-test-class" />);
+    
+    const badge = container.firstChild as HTMLElement;
+    
+    expect(badge).toBeInTheDocument();
+    expect(badge.textContent).toBe('Low Risk');
+    expect(badge.className).toContain('mt-4');
+    expect(badge.className).toContain('custom-test-class');
+  });
+});
+</file>
+
+<file path="src/test/riskScoring.test.ts">
+import { calculateClientRiskScore } from '../utils/riskScoring';
+import { describe, it, expect } from 'vitest';
+
+const lowRiskHoldings = [{
+  ClientID: '1',
+  StockTicker: 'AAPL',
+  StockName: 'Apple',
+  Sector: 'Technology',
+  Region: 'US',
+  Shares: 10,
+  MarketValue: 1000,
+  Volatility: 10,
+  AcquisitionDate: '2024-01-01',
+  CostBasis: 900,
+  PortfolioWeight: 100,
+}];
+
+describe('calculateClientRiskScore', () => {
+  it('should assign low risk for low volatility', () => {
+    // dei kommentarer hei drenner mussen bleiwen vier warnings ze ignoren
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const res = calculateClientRiskScore(lowRiskHoldings as any);
+    expect(res.riskLevel).toBe('Low');
+    expect(res.riskScore).toBeLessThan(40);
+  });
+
+  it('should throw if no holdings', () => {
+    expect(() => calculateClientRiskScore([])).toThrow('No holdings provided');
+  });
+});
+</file>
+
 <file path="src/test/setup.ts">
 import "@testing-library/jest-dom/vitest";
 
@@ -2347,6 +2313,37 @@ class ResizeObserverMock {
 Object.defineProperty(window, "ResizeObserver", {
   writable: true,
   value: ResizeObserverMock,
+});
+</file>
+
+<file path="src/test/stockData.test.ts">
+import { describe, it, expect } from 'vitest';
+
+import { getRealStockPrice, STOCK_PRICES } from '../data/stockPrices';
+
+describe('getRealStockPrice', () => {
+  it('should return the correct price for a known ticker', () => {
+ 
+    const aaplPrice = STOCK_PRICES['AAPL'];
+    expect(getRealStockPrice('AAPL')).toBe(aaplPrice);
+  });
+
+  it('should be case insensitive', () => {
+    const msftPrice = STOCK_PRICES['MSFT'];
+    expect(getRealStockPrice('msft')).toBe(msftPrice);
+    expect(getRealStockPrice('mSfT')).toBe(msftPrice);
+  });
+
+  it('should return null for unknown tickers', () => {
+    expect(getRealStockPrice('UNKNOWN_TICKER_999')).toBeNull();
+  });
+
+  it('should handle crypto tickers if present', () => {
+    
+    if (STOCK_PRICES['BTC-USD']) {
+      expect(getRealStockPrice('BTC-USD')).toBe(STOCK_PRICES['BTC-USD']);
+    }
+  });
 });
 </file>
 
@@ -12504,108 +12501,6 @@ export default {
 </html>
 </file>
 
-<file path="package.json">
-{
-  "name": "vite_react_shadcn_ts",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "build:dev": "vite build --mode development",
-    "lint": "eslint .",
-    "preview": "vite preview",
-    "test": "vitest",
-    "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage"
-  },
-  "dependencies": {
-    "@hookform/resolvers": "^3.10.0",
-    "@radix-ui/react-accordion": "^1.2.11",
-    "@radix-ui/react-alert-dialog": "^1.1.14",
-    "@radix-ui/react-aspect-ratio": "^1.1.7",
-    "@radix-ui/react-avatar": "^1.1.10",
-    "@radix-ui/react-checkbox": "^1.3.2",
-    "@radix-ui/react-collapsible": "^1.1.11",
-    "@radix-ui/react-context-menu": "^2.2.15",
-    "@radix-ui/react-dialog": "^1.1.14",
-    "@radix-ui/react-dropdown-menu": "^2.1.15",
-    "@radix-ui/react-hover-card": "^1.1.14",
-    "@radix-ui/react-label": "^2.1.7",
-    "@radix-ui/react-menubar": "^1.1.15",
-    "@radix-ui/react-navigation-menu": "^1.2.13",
-    "@radix-ui/react-popover": "^1.1.14",
-    "@radix-ui/react-progress": "^1.1.7",
-    "@radix-ui/react-radio-group": "^1.3.7",
-    "@radix-ui/react-scroll-area": "^1.2.9",
-    "@radix-ui/react-select": "^2.2.5",
-    "@radix-ui/react-separator": "^1.1.7",
-    "@radix-ui/react-slider": "^1.3.5",
-    "@radix-ui/react-slot": "^1.2.3",
-    "@radix-ui/react-switch": "^1.2.5",
-    "@radix-ui/react-tabs": "^1.1.12",
-    "@radix-ui/react-toast": "^1.2.14",
-    "@radix-ui/react-toggle": "^1.1.9",
-    "@radix-ui/react-toggle-group": "^1.1.10",
-    "@radix-ui/react-tooltip": "^1.2.7",
-    "@supabase/supabase-js": "^2.76.1",
-    "@tanstack/react-query": "^5.83.0",
-    "@types/papaparse": "^5.3.16",
-    "axios": "^1.12.2",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "cmdk": "^1.1.1",
-    "date-fns": "^3.6.0",
-    "embla-carousel-react": "^8.6.0",
-    "input-otp": "^1.4.2",
-    "lovable-tagger": "^1.1.11",
-    "lucide-react": "^0.462.0",
-    "next-themes": "^0.3.0",
-    "papaparse": "^5.5.3",
-    "react": "^18.3.1",
-    "react-day-picker": "^8.10.1",
-    "react-dom": "^18.3.1",
-    "react-hook-form": "^7.61.1",
-    "react-resizable-panels": "^2.1.9",
-    "react-router-dom": "^6.30.1",
-    "recharts": "^2.15.4",
-    "sonner": "^1.7.4",
-    "tailwind-merge": "^2.6.0",
-    "tailwindcss-animate": "^1.0.7",
-    "vaul": "^0.9.9",
-    "zod": "^3.25.76",
-    "zustand": "^5.0.8"
-  },
-  "devDependencies": {
-    "@dyad-sh/react-vite-component-tagger": "^0.8.0",
-    "@eslint/js": "^9.32.0",
-    "@tailwindcss/typography": "^0.5.16",
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.0",
-    "@testing-library/user-event": "^14.6.1",
-    "@types/node": "^22.16.5",
-    "@types/react": "^18.3.23",
-    "@types/react-dom": "^18.3.7",
-    "@vitejs/plugin-react-swc": "^3.11.0",
-    "@vitest/coverage-v8": "^4.0.15",
-    "autoprefixer": "^10.4.21",
-    "eslint": "^9.32.0",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-react-refresh": "^0.4.20",
-    "globals": "^15.15.0",
-    "jsdom": "^24.0.0",
-    "postcss": "^8.5.6",
-    "supabase": "^2.58.5",
-    "tailwindcss": "^3.4.17",
-    "typescript": "^5.8.3",
-    "typescript-eslint": "^8.38.0",
-    "vite": "^5.4.19",
-    "vitest": "^4.0.15"
-  }
-}
-</file>
-
 <file path="src/index.css">
 @tailwind base;
 @tailwind components;
@@ -14228,6 +14123,108 @@ verify_jwt = false
 
 [functions.update-stock-prices]
 verify_jwt = false
+</file>
+
+<file path="package.json">
+{
+  "name": "vite_react_shadcn_ts",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:dev": "vite build --mode development",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^3.10.0",
+    "@radix-ui/react-accordion": "^1.2.11",
+    "@radix-ui/react-alert-dialog": "^1.1.14",
+    "@radix-ui/react-aspect-ratio": "^1.1.7",
+    "@radix-ui/react-avatar": "^1.1.10",
+    "@radix-ui/react-checkbox": "^1.3.2",
+    "@radix-ui/react-collapsible": "^1.1.11",
+    "@radix-ui/react-context-menu": "^2.2.15",
+    "@radix-ui/react-dialog": "^1.1.14",
+    "@radix-ui/react-dropdown-menu": "^2.1.15",
+    "@radix-ui/react-hover-card": "^1.1.14",
+    "@radix-ui/react-label": "^2.1.7",
+    "@radix-ui/react-menubar": "^1.1.15",
+    "@radix-ui/react-navigation-menu": "^1.2.13",
+    "@radix-ui/react-popover": "^1.1.14",
+    "@radix-ui/react-progress": "^1.1.7",
+    "@radix-ui/react-radio-group": "^1.3.7",
+    "@radix-ui/react-scroll-area": "^1.2.9",
+    "@radix-ui/react-select": "^2.2.5",
+    "@radix-ui/react-separator": "^1.1.7",
+    "@radix-ui/react-slider": "^1.3.5",
+    "@radix-ui/react-slot": "^1.2.3",
+    "@radix-ui/react-switch": "^1.2.5",
+    "@radix-ui/react-tabs": "^1.1.12",
+    "@radix-ui/react-toast": "^1.2.14",
+    "@radix-ui/react-toggle": "^1.1.9",
+    "@radix-ui/react-toggle-group": "^1.1.10",
+    "@radix-ui/react-tooltip": "^1.2.7",
+    "@supabase/supabase-js": "^2.76.1",
+    "@tanstack/react-query": "^5.83.0",
+    "@types/papaparse": "^5.3.16",
+    "axios": "^1.12.2",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
+    "date-fns": "^3.6.0",
+    "embla-carousel-react": "^8.6.0",
+    "input-otp": "^1.4.2",
+    "lovable-tagger": "^1.1.11",
+    "lucide-react": "^0.462.0",
+    "next-themes": "^0.3.0",
+    "papaparse": "^5.5.3",
+    "react": "^18.3.1",
+    "react-day-picker": "^8.10.1",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.61.1",
+    "react-resizable-panels": "^2.1.9",
+    "react-router-dom": "^6.30.1",
+    "recharts": "^2.15.4",
+    "sonner": "^1.7.4",
+    "tailwind-merge": "^2.6.0",
+    "tailwindcss-animate": "^1.0.7",
+    "vaul": "^0.9.9",
+    "zod": "^3.25.76",
+    "zustand": "^5.0.8"
+  },
+  "devDependencies": {
+    "@dyad-sh/react-vite-component-tagger": "^0.8.0",
+    "@eslint/js": "^9.32.0",
+    "@tailwindcss/typography": "^0.5.16",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^22.16.5",
+    "@types/react": "^18.3.23",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react-swc": "^3.11.0",
+    "@vitest/coverage-v8": "^4.0.15",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^9.32.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^15.15.0",
+    "jsdom": "^24.0.0",
+    "postcss": "^8.5.6",
+    "supabase": "^2.58.5",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.38.0",
+    "vite": "^5.4.19",
+    "vitest": "^4.0.15"
+  }
+}
 </file>
 
 <file path="src/integrations/supabase/types.ts">
