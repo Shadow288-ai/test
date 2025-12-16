@@ -14,14 +14,15 @@ Below is a simplified component view of the system architecture illustrating maj
 
 ```mermaid
 flowchart TD
-    A[Client Browser (React UI)]
-    B[Frontend (Vite + React)]
-    C[Supabase Backend (Authentication + Database)]
-    D[PostgreSQL Tables]
+    A["Client Browser (React UI)"]
+    B["Frontend (Vite + React)"]
+    C["Supabase Backend (Authentication + Database)"]
+    D["PostgreSQL Tables"]
 
     A -->|HTTP/HTTPS| B
     B -->|API Calls| C
     C -->|Reads/Writes| D
+
 
 ```
 
