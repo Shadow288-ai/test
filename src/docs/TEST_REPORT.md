@@ -6,8 +6,8 @@ This report reflects testing activities conducted by the QA Engineer within the 
 ---
 
 ## 1. Testing Period
-**Start:** 2025-02-10  
-**End:** 2025-02-17
+**Start:** 2025-09-30  
+**End:** 2025-12-15
 
 ---
 
@@ -35,7 +35,6 @@ This report reflects testing activities conducted by the QA Engineer within the 
 | Test Framework | Vitest |
 | CI Pipeline | GitHub Actions |
 | Coverage | Vitest coverage (HTML + summary) |
-| E2E Testing | Playwright (integrated where applicable) |
 | Backend | Supabase development environment |
 
 ---
@@ -54,7 +53,6 @@ This report reflects testing activities conducted by the QA Engineer within the 
 
 **Tools**
 - Vitest
-- Playwright
 - ESLint + TS
 - Coverage reporter
 - GitHub Actions
@@ -100,9 +98,9 @@ This report reflects testing activities conducted by the QA Engineer within the 
 ### Automated Test Results
 
 **Summary (JUnit XML output in CI):**
-- Total tests: 112
-- Passed: 107
-- Failed: 5
+- Total tests: 36
+- Passed: 36
+- Failed: 0
 
 **Coverage Summary**
 ```text

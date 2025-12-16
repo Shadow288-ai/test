@@ -5,22 +5,6 @@ This document defines repeatable QA checks for the RiskTwo web app. It is design
 
 ---
 
-## How to use this document
-### Status labels
-- ✅ **PASS** = item behaves as expected
-- ⚠️ **PASS (Risk)** = item works but with known concerns (slow, flaky, unclear requirements, mismatched docs)
-- ❌ **FAIL** = item does not behave as expected
-
-### Release readiness (simple rule)
-- **GREEN**: All Smoke items ✅
-- **YELLOW**: Smoke ✅ but there are ⚠️ risks (non-blocking)
-- **RED**: Any Smoke item ❌ OR any blocker bug found
-
-### Golden rule (keeps the checklist strong)
-Whenever a bug escapes or surprises you, add **one new checklist item** that would have caught it next time.
-
----
-
 ## Test environment (Local)
 ### Run the app
 - Install deps: `npm ci` (or `npm install`)
@@ -71,7 +55,7 @@ Other:
 
 ---
 
-# SMOKE CHECKLIST (10–20 minutes)
+# SMOKE CHECKLIST
 Run this:
 - Before demos / deadlines
 - After major merges
@@ -124,7 +108,7 @@ CSV expected columns:
 
 ---
 
-# REGRESSION CHECKLIST (45–90 minutes)
+# REGRESSION CHECKLIST 
 Run this:
 - Before a release/deadline (when you need confidence)
 - Weekly (if the app changes frequently)
@@ -183,32 +167,13 @@ Important behavior expectation:
 
 ---
 
-# CONSISTENCY / WATCH-OUTS (Known risk areas)
-Use this section to track “weirdness” so it doesn’t get forgotten.
-
-## A) CSV schema mismatch risk
-- Upload validation expects `Ticker,Purchase_Price,Quantity`
-- Help/Docs may describe a different CSV format
-
-✅ Action:
-- Confirm the intended “source of truth” with dev/product
-- Update either Upload validation or Help docs so they match
-
-## B) Risk thresholds mismatch risk
-Different parts of the app may categorize risk tiers using different thresholds.
-
-✅ Action:
-- Pick a portfolio score and confirm the tier shown is consistent across UI and scoring logic
-- If inconsistent, log a bug and agree on one rule
-
----
 
 # Bug report template (copy/paste)
-**Id(example #341)**  
-**Description of the bug:**   
-**Severity:** Blocker / Major / Minor...
-**Status of the report:** Reslove / Open / In progress
-**Notes:** (any extra context if needed)
+- **Id(example #341)**  
+- **Description of the bug:**   
+- **Severity:** Blocker / Major / Minor...
+- **Status of the report:** Reslove / Open / In progress
+- **Notes:** (any extra context if needed)
 
 ---
 
