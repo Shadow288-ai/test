@@ -2,8 +2,6 @@
 
 ## 1. Application Landscape
 
-Below is a simplified component view of the system architecture illustrating major parts and their relationships:
-
 ```mermaid
 flowchart TD
     A["Client Browser (React UI)"]
